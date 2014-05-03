@@ -6,7 +6,7 @@ module Annealing
     end
 
     def ==(other)
-      other.polys == self.polys
+      other.polys.sort == self.polys.sort
     end
     def eq(other)
       self.==(other)
@@ -40,11 +40,51 @@ module Annealing
 
     def rainbow!
       self.color = %w{red yellow orange green blue violet}.sample
+      self
+    end
+
+    def allocate(n)
+      return [PolyGroup.new([])]    if n <= 0
+      return [PolyGroup.new(polys)] if n == 1
+      t1, t2 = halve_triangles(n)
+      a1 = t1.area
+      a2 = t2.area
+      f = ((n.to_f * a1) / (a1 + a2)).round
+      alloc1 = t1.allocate(f)
+      alloc2 = t2.allocate(n - f)
+      alloc1 + alloc2
+    end
+
+    def area
+      @area ||= polys.inject(0){|s,p| s + p.area }
+    end
+
+    def inspect
+      "pg[ #{polys.map(&:inspect).join(', ')} ]"
     end
 
     private
 
+    def halve_triangles(n)
+      l,t,r,b = bounding_rect
+      f = n.to_f
+      h = f / 2.0
+      if (r - l) > (b - t)
+        slice_x((r*h+l*(f-h))/f)
+      else
+        slice_y((b*h+t*(f-h))/f)
+      end
+    end
+
+    def bounding_rect
+      ps = polys.map(&:points).flatten
+      xs = ps.map(&:x)
+      ys = ps.map(&:y)
+      [xs.min, ys.min, xs.max, ys.max]
+    end
+
     def slice(partition, centerpoint, triangles)
+
       antipartition = ->(p){ !partition[p] }
       [ clipping(partition,     centerpoint, triangles),
         clipping(antipartition, centerpoint, triangles) ]

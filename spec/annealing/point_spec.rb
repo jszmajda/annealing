@@ -22,5 +22,11 @@ module Annealing
       expect(Point.new(5, 1.0)).to eq(Point.new(5, 1))
     end
 
+    it "can be sorted" do
+      unsort = [Point.new(1,2), Point.new(4,4), Point.new(2,3)]
+      sorted = [Point.new(1,2), Point.new(2,3), Point.new(4,4)]
+      expect(unsort.sort.reverse).to eq(sorted)
+    end
+
   end
 end

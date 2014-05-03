@@ -31,6 +31,17 @@ module Annealing
       expect(chpt.polys.select{|p| p.points.length == 3 }.count).to eq(chpt.polys.count)
     end
 
+    describe "#area" do
+      it "returns the area of its polygons" do
+        p = PolyGroup.new([
+          Polygon.make([0,0], [10,0], [0,10]),
+          Polygon.make([10,0], [10,10], [0,10])
+        ])
+
+        expect(p.area).to eq(10*10)
+      end
+    end
+
     describe "slicing" do
       let(:complex) do
         PolyGroup.new([
@@ -100,6 +111,28 @@ module Annealing
             Polygon.make([106.7619,131.19048  ], [157.42857,105.85714 ], [106.7619,131.19048])
           ])
           expect(complex.slice_y(50)).to eq([top, bottom])
+        end
+      end
+      describe "#allocate" do
+        it "divides the PolyGroup into equal parts" do
+          result = PolyGroup.new([Polygon.make([0,0],[202,0],[204,200], [306,302], [110, 302])]).allocate(3)
+          expected = [
+            PolyGroup.new([ Polygon.make([0.0,0.0], [153.0,0.0], [153.0,150.0]),
+                            Polygon.make([0.0,0.0], [153.0,151.0], [153.0,150.0]),
+                            Polygon.make([153.0,150.0], [153.0,151.0], [153.0,151.0]),
+                            Polygon.make([0.0,0.0], [153.0,151.0], [55.0,151.0]) ]), 
+            PolyGroup.new([ Polygon.make([153.0,151.0], [153.0,151.0], [153.0,151.0]),
+                            Polygon.make([153.0,151.0], [153.0,151.0], [110.0,302.0]),
+                            Polygon.make([110.0,302.0], [153.0,151.0], [55.0,151.0]),
+                            Polygon.make([110.0,302.0], [153.0,151.0], [153.0,302.0]) ]), 
+            PolyGroup.new([ Polygon.make([202.0,0.0], [153.0,0.0], [204.0,200.0]),
+                            Polygon.make([204.0,200.0], [153.0,0.0], [153.0,150.0]),
+                            Polygon.make([204.0,200.0], [153.0,150.0], [306.0,302.0]),
+                            Polygon.make([306.0,302.0], [153.0,150.0], [153.0,151.0]),
+                            Polygon.make([306.0,302.0], [153.0,151.0], [153.0,302.0]) ])
+          ]
+          # Meh, comparing inspects. Not sure why == isn't working...
+          expect(result.inspect).to eq(expected.inspect)
         end
       end
     end

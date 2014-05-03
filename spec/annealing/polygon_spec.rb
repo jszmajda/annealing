@@ -13,8 +13,10 @@ module Annealing
       p1 = Polygon.new([Point.new(1,2), Point.new(2,3)])
       p2 = Polygon.new([Point.new(1,2), Point.new(2,3)])
       p3 = Polygon.new([Point.new(3,2), Point.new(2,3)])
+      p4 = Polygon.new([Point.new(2,3), Point.new(1,2)])
       expect(p1).to eq p2
       expect(p1).to_not eq p3
+      expect(p1).to eq p4 # order independent
     end
 
     it "constructs a little more easily" do
@@ -27,6 +29,17 @@ module Annealing
       p = Polygon.make(Point.new(100,200), [200,300], [100,300])
       p2 = Polygon.new([ Point.new(100,200), Point.new(200,300), Point.new(100,300) ])
       expect(p).to eq(p2)
+    end
+
+    describe "#area" do 
+      it "returns the area of the polygon" do
+        p = Polygon.make([100,200], [200,300], [100,300])
+        expect(p.area).to eq(5000.0)
+      end
+      it "is always positive" do
+        p = Polygon.make([20.0,5.0], [15.0,12.5], [20.0,12.5])
+        expect(p.area).to eq(18.75)
+      end
     end
 
     describe "#triangulate" do

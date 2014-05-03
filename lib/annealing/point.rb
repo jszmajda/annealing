@@ -17,5 +17,9 @@ module Annealing
     def inspect
       "(#{x},#{y})"
     end
+
+    def <=>(other)
+      (other.x + other.y) <=> (self.x + self.y)
+    end
   end
 end
