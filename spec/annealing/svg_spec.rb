@@ -34,6 +34,16 @@ module Annealing
       output = SVG.polygons_to_svg(sample_polys)
       expect(output).to eq sample_svg
     end
+    it "can make a box poly" do
+      pg = PolyGroup.new([
+        Polygon.make(
+          [3 , 3] , [3 , -3],
+          [-3, -3], [-3, 3]
+        )
+      ])
+      pg.color = 'black'
+      expect(SVG.box_at(Point.new(0,0))).to eq(pg)
+    end
     it "reads a simple SVG into a list of Polygons" do
       polys = SVG.svg_to_polygons(sample_svg)
       expect(polys).to eq sample_polys

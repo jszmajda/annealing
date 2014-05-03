@@ -12,6 +12,15 @@ module Annealing
       self.==(other)
     end
 
+    def rainbow!
+      self.color = %w{red yellow orange green blue violet}.sample
+      self
+    end
+
+    def inspect
+      "pg[ #{polys.map(&:inspect).join(', ')} ]"
+    end
+
     def triangulate
       threed = polys.map do |p|
         td = p.triangulate
@@ -38,11 +47,6 @@ module Annealing
       slice(partition, centerpoint, self.triangulate)
     end
 
-    def rainbow!
-      self.color = %w{red yellow orange green blue violet}.sample
-      self
-    end
-
     def allocate(n)
       return [PolyGroup.new([])]    if n <= 0
       return [PolyGroup.new(polys)] if n == 1
@@ -59,8 +63,17 @@ module Annealing
       @area ||= polys.inject(0){|s,p| s + p.area }
     end
 
-    def inspect
-      "pg[ #{polys.map(&:inspect).join(', ')} ]"
+    def center
+      return nil unless polys.any?
+      l,t,r,b = bounding_rect
+      mx = (r+l) / 2.0
+      my = (b+t) / 2.0
+      lh, rh = slice_x(mx)
+      th, bh = PolyGroup.new(lh.polys + rh.polys).slice_y(my)
+      m = Point.new(mx, my)
+      sort = ->(q,s) { q.distance_to(m) <=> s.distance_to(m) }
+      all_points = [lh,rh,th,bh].map(&:polys).flatten.map(&:points).flatten
+      all_points.sort(&sort).first
     end
 
     private

@@ -8,7 +8,12 @@ module Annealing
       File.open("#{root_dir}/out.svg", 'wb') do |f| 
 
         parts = park.allocate(200)
-        f << Annealing::SVG.polygons_to_svg(*parts.each(&:rainbow!))
+        centers = parts.map(&:center).compact.map{|p| SVG.box_at(p) }
+
+        f << SVG::SVG_HEADER
+        f << SVG.pg(park)
+        centers.map{|c| f << SVG.pg(c) }
+        f << SVG::SVG_FOOTER
 
       end
     end

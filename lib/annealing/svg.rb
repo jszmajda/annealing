@@ -16,6 +16,12 @@ module Annealing
       PolyGroup.new(polys_from_polygons(doc) + polys_from_paths(doc))
     end
 
+    def self.box_at(p)
+      pg = PolyGroup.new [Polygon.make(*[[3,3],[3,-3],[-3,-3],[-3,3]].map{|dx,dy| [p.x + dx, p.y + dy] })]
+      pg.color = 'black'
+      pg
+    end
+
     private
 
     def self.polys_from_polygons(doc)

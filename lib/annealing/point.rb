@@ -21,5 +21,11 @@ module Annealing
     def <=>(other)
       (other.x + other.y) <=> (self.x + self.y)
     end
+
+    def distance_to(p)
+      dx = x - p.x
+      dy = y - p.y
+      Math.sqrt ( (dx ** 2) + (dy ** 2) )
+    end
   end
 end

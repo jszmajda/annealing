@@ -28,5 +28,13 @@ module Annealing
       expect(unsort.sort.reverse).to eq(sorted)
     end
 
+    describe "#distance_to" do
+      it "returns the distance to another point" do
+        p1 = Point.new(0,0)
+        p2 = Point.new(3,0)
+        expect(p1.distance_to(p2)).to eq 3
+      end
+    end
+
   end
 end

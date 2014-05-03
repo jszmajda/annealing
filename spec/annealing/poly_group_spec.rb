@@ -5,6 +5,20 @@ module Annealing
       file = File.join(File.dirname(__FILE__), '..', 'park.svg')
       SVG.svg_to_polygons(File.read(file))
     end
+    let(:complex) do
+      PolyGroup.new([
+        Polygon.make(
+          [106.7619, 131.19048],
+          [17.190476, 96.809524],
+          [22.619047, 71.47619],
+          [34.380952, 47.952381],
+          [46.142857, 39.809524],
+          [157.42857, 105.85714],
+          [106.7619, 131.19048]
+        )
+      ])
+    end
+    let(:simple) { PolyGroup.new([Polygon.make([10,20],[20,20],[20,5])]) }
     it "constructs from a set of Polygons" do
       polys = [Polygon.make([1,2],[2,3]), Polygon.make([2,3],[3,4])]
       pg = PolyGroup.new([Polygon.make([1,2],[2,3]), Polygon.make([2,3],[3,4])])
@@ -43,20 +57,6 @@ module Annealing
     end
 
     describe "slicing" do
-      let(:complex) do
-        PolyGroup.new([
-          Polygon.make(
-            [106.7619, 131.19048],
-            [17.190476, 96.809524],
-            [22.619047, 71.47619],
-            [34.380952, 47.952381],
-            [46.142857, 39.809524],
-            [157.42857, 105.85714],
-            [106.7619, 131.19048]
-          )
-        ])
-      end
-      let(:simple) { PolyGroup.new([Polygon.make([10,20],[20,20],[20,5])]) }
       describe "#slice_x" do
         it "clips properly simple" do
           left = PolyGroup.new([Polygon.make([10,20],[20,20],[20,5])])
@@ -134,6 +134,13 @@ module Annealing
           # Meh, comparing inspects. Not sure why == isn't working...
           expect(result.inspect).to eq(expected.inspect)
         end
+      end
+    end
+
+    describe "#center" do
+      it "returns the centerpoint of the polygroup" do
+        expect(complex.center).to eq(Point.new(87.309523, 85.5))
+        expect(simple.center).to eq(Point.new(15, 12.5))
       end
     end
   end
