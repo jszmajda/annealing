@@ -1,7 +1,8 @@
 module Annealing
   class PolyGroup
-    attr_accessor :polys, :color
+    attr_accessor :polys, :color, :fill
     def initialize(polys)
+      @fill = "#cccccc"
       @polys = polys
     end
 

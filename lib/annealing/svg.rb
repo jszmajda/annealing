@@ -8,7 +8,7 @@ module Annealing
 
     def self.pg(polygroup)
       c = polygroup.color || "rgb(20,250,250)"
-      polygroup.polys.map{|p| polyline(p, c) }.join
+      polygroup.polys.map{|p| polyline(p, polygroup.fill, c) }.join
     end
 
     def self.svg_to_polygons(svg)
@@ -41,8 +41,8 @@ module Annealing
       end
     end
 
-    def self.polyline(p, color="rgb(20,250,250)")
-      %Q{<polygon points="#{p.points.map{|pt| point(pt) }.join(" ")}" style="fill:#cccccc;stroke:#{color};stroke-width:2"/>}
+    def self.polyline(p, fill="#cccccc", color="rgb(20,250,250)")
+      %Q{<polygon points="#{p.points.map{|pt| point(pt) }.join(" ")}" style="fill:#{fill};stroke:#{color};stroke-width:2"/>}
     end
 
     def self.point(p)
