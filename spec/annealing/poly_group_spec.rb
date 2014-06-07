@@ -143,5 +143,19 @@ module Annealing
         expect(simple.center).to eq(Point.new(15, 12.5))
       end
     end
+
+    describe "#bounds" do
+      it "returns the boundary points of a polygon" do
+        p = PolyGroup.new([
+          Polygon.make([0,0], [10,0], [0,10]),
+          Polygon.make([10,0], [10,10], [0,10]),
+          Polygon.make([5,0], [0,1], [0,10]),
+          Polygon.make([50,0], [0,1], [0,10])
+        ])
+
+        expected = Polygon.make([50,0],[10,10],[0,10],[0,0])
+        expect(p.bounds).to eq(expected)
+      end
+    end
   end
 end

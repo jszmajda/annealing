@@ -19,6 +19,16 @@ module Annealing
       expect(p1).to eq p4 # order independent
     end
 
+    it "supports equality checking with make" do
+      p1 = Polygon.make([1.0,2.0], [2.0,3.0])
+      p2 = Polygon.make([1,2], [2,3])
+      p3 = Polygon.make([3,2], [2,3])
+      p4 = Polygon.make([2,3], [1,2])
+      expect(p1).to eq p2
+      expect(p1).to_not eq p3
+      expect(p1).to eq p4 # order independent
+    end
+
     it "constructs a little more easily" do
       p = Polygon.make([100,200], [200,300], [100,300])
       p2 = Polygon.new([ Point.new(100,200), Point.new(200,300), Point.new(100,300) ])
@@ -31,7 +41,7 @@ module Annealing
       expect(p).to eq(p2)
     end
 
-    describe "#area" do 
+    describe "#area" do
       it "returns the area of the polygon" do
         p = Polygon.make([100,200], [200,300], [100,300])
         expect(p.area).to eq(5000.0)

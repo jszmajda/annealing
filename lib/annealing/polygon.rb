@@ -10,6 +10,7 @@ module Annealing
     end
 
     def ==(other)
+      #self.points.sort.map{|p| [p.x,p.y] } == other.points.sort.map{|p| [p.x,p.y] }
       self.points.sort == other.points.sort
     end
 

@@ -7,7 +7,7 @@ module Annealing
 
       File.open("#{root_dir}/out.svg", 'wb') do |f| 
 
-        parts = park.allocate(58)
+        parts = park.allocate(158)
         bounds = parts.map do |p|
           l, t, r, b = p.send(:bounding_rect)
           PolyGroup.new([Polygon.make(

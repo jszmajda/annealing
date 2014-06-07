@@ -7,8 +7,10 @@ module Annealing
 
     ROUNDING = 5
     def ==(other)
-      (other.x / self.x).round(ROUNDING) === 1.0 &&
-      (other.y / self.y).round(ROUNDING) === 1.0
+      xx = (other.x / self.x).round(ROUNDING)
+      yy = (other.y / self.y).round(ROUNDING)
+      (xx === 1.0 || xx.infinite? || xx.nan?) &&
+        (yy === 1.0 || yy.infinite? || yy.nan?)
     end
     def eql(other)
       self.==(other)

@@ -77,7 +77,36 @@ module Annealing
       all_points.sort(&sort).first
     end
 
+    def bounds
+      @bounds ||= Polygon.make(*convex_hull(polys.flat_map(&:points)))
+    end
+
     private
+
+    # monotone chain
+    def convex_hull(pts)
+      pts = pts.sort.uniq
+      return pts if pts.length < 3
+      lower = []
+      pts.each do |p|
+        while lower.length > 1 && !cross?(lower[-2], lower[-1], p) do
+          lower.pop
+        end
+        lower.push(p)
+      end
+      upper = []
+      pts.reverse_each do |p|
+        while upper.length > 1 && !cross?(upper[-2], upper[-1], p) do
+          upper.pop
+        end
+        upper.push(p)
+      end
+      lower[0...-1] + upper[0...-1]
+    end
+
+    def cross?(o, a, b)
+      (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x) > 0
+    end
 
     def halve_triangles(n)
       l,t,r,b = bounding_rect
