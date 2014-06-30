@@ -35,6 +35,10 @@ class Viz
   end
 
   def crystal
+    @crystal ||= Annealing::Crystal.build_from_polygroups(@parts)
+  end
+
+  def draw_crystal
     centers      crystal.atoms
     center_links crystal.neighbor_links
   end
@@ -44,18 +48,22 @@ class Viz
     150
   end
 
-  def centers
+  def centers(atoms)
     stroke_weight(3)
     stroke(80,180,200)
     fill(150)
-    centers = @parts.map(&:center).compact
-    centers.each do |c|
-      ellipse(c.x,c.y, 5,5)
+    atoms.each do |c|
+      p = c.point
+      ellipse(p.x,p.y, 5,5)
     end
   end
 
-  def center_links
-    raise "find shortest links"
+  def center_links(links)
+    stroke_weight(2)
+    stroke(254,0,0)
+    links.each do |a,b|
+      line(a.point.x, a.point.y, b.point.x, b.point.y)
+    end
   end
 
   def mesh

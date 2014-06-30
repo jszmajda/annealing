@@ -31,8 +31,16 @@ module Annealing
       a4.crystal = c2
 
       expect(a1).to_not eq(a2)
-      expect(a1).to eq(a3)
-      expect(a1).to eq(a4)
+      expect(a1).to     eq(a3)
+      expect(a1).to     eq(a4)
+    end
+
+    describe "#at" do
+      it "builds an Atom at a specified point with a nil crystal" do
+        a = Atom.at(1,2)
+        expect(a.point).to   eq(Point.new(1,2))
+        expect(a.crystal).to be_nil
+      end
     end
   end
 end
