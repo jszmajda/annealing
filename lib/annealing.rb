@@ -1,6 +1,6 @@
 require 'nokogiri'
-require 'annealing/matrix'
-require 'annealing/node'
+require 'annealing/crystal'
+require 'annealing/atom'
 require 'annealing/polygon'
 require 'annealing/point'
 require 'annealing/svg'

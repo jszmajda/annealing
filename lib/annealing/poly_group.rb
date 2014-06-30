@@ -48,6 +48,7 @@ module Annealing
       slice(partition, centerpoint, self.triangulate)
     end
 
+    # returns an array of PolyGroups
     def allocate(n)
       return [PolyGroup.new([])]    if n <= 0
       return [PolyGroup.new(polys)] if n == 1

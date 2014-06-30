@@ -12,10 +12,6 @@ def draw
   background(60,50,55)
 
   @viz.draw
-  stroke_weight 3
-  line(150, 390, 150, 410)
-  line(0, 400, frame_count, 400)
-
 end
 
 class Viz
@@ -28,14 +24,24 @@ class Viz
   end
 
   def draw
+    if(@lna != num_alloc)
+      @parts = @park.allocate(num_alloc) # @parts is an array of PolyGroups
+      @lna = num_alloc
+    end
     ptri
-    mesh
-    #centers
+    #mesh
+    draw_crystal
     @tick += 1
   end
 
+  def crystal
+    centers      crystal.atoms
+    center_links crystal.neighbor_links
+  end
+
   def num_alloc
-    [@tick, 150].min
+    #[@tick, 150].min
+    150
   end
 
   def centers
@@ -48,14 +54,14 @@ class Viz
     end
   end
 
+  def center_links
+    raise "find shortest links"
+  end
+
   def mesh
     stroke_weight(1)
     stroke(230)
     no_fill
-    if(@lna != num_alloc)
-      @parts = @park.allocate(num_alloc)
-      @lna = num_alloc
-    end
     @parts.each do |pg|
       begin_shape
       pg.bounds.points.each do |p|
