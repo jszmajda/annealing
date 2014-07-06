@@ -6,12 +6,77 @@ HEI=480
 def setup
   size WID,HEI
   @viz = Viz.new
+  @mover = Mover.new(@viz)
 end
 
 def draw
   background(60,50,55)
 
   @viz.draw
+  @mover.draw
+end
+
+class Mover
+  attr_accessor :viz
+  def initialize(viz)
+    @viz = viz
+    @x = 0
+    @y = 0
+    @rad = 15
+    choose_first_point
+    @next = @point
+    choose_next_point
+  end
+
+  def draw
+    update
+
+    fill(0,150,250)
+    ellipse(@x,@y, @rad + 5,@rad + 5)
+    fill(0,190,255)
+    ellipse(@x,@y, @rad,@rad)
+
+    fill(0)
+    stroke(200,200,0)
+    ellipse(@next.point.x, @next.point.y, 13,13)
+  end
+
+  def update
+    choose_next_point if at_next_point?
+    move_to_next_point
+  end
+
+  def move_to_next_point
+    @x += @dx
+    @y += @dy
+  end
+
+  attr_reader :point
+
+  def choose_next_point
+    @point = @next
+
+    #puts "starting choose_next_point"
+    links = @viz.crystal.neighbor_links
+    candidates = links.select{|l| l[0] == point || l[1] == point }.flatten.uniq.reject{|a| a == point }
+    #puts "candidates: #{candidates.inspect}"
+    @next = candidates.sample
+    #puts "@point is #{@point.inspect} Next is #{@next.inspect}"
+    distance = Math.sqrt(((@next.point.x - @x) ** 2) + ((@next.point.y - @y) ** 2))
+    @dx = (@next.point.x - @x) / (distance / 2.0)
+    @dy = (@next.point.y - @y) / (distance / 2.0)
+  end
+
+  def at_next_point?
+    @next.nil? || ( (@x - @next.point.x).abs < 2 && (@y - @next.point.y).abs < 2 )
+  end
+
+  def choose_first_point
+    a = @viz.crystal.atoms.sample
+    @x = a.point.x
+    @y = a.point.y
+    @point = a
+  end
 end
 
 class Viz
@@ -20,14 +85,10 @@ class Viz
     @park = Annealing::SVG.svg_to_polygons(File.read("spec/park.svg"))
     @ptri = @park.triangulate
     @tick = 0
-
+    @parts = @park.allocate(num_alloc) # @parts is an array of PolyGroups
   end
 
   def draw
-    if(@lna != num_alloc)
-      @parts = @park.allocate(num_alloc) # @parts is an array of PolyGroups
-      @lna = num_alloc
-    end
     ptri
     #mesh
     draw_crystal
