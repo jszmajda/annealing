@@ -36,6 +36,11 @@ class Mover
     fill(0,190,255)
     ellipse(@x,@y, @rad,@rad)
 
+    next_candidates.each do |cand|
+      fill(0)
+      stroke(200,100,0)
+      ellipse(cand.point.x, cand.point.y, 10,10)
+    end
     fill(0)
     stroke(200,200,0)
     ellipse(@next.point.x, @next.point.y, 13,13)
@@ -57,14 +62,17 @@ class Mover
     @point = @next
 
     #puts "starting choose_next_point"
-    links = @viz.crystal.neighbor_links
-    candidates = links.select{|l| l[0] == point || l[1] == point }.flatten.uniq.reject{|a| a == point }
     #puts "candidates: #{candidates.inspect}"
-    @next = candidates.sample
+    @next = next_candidates.sample
     #puts "@point is #{@point.inspect} Next is #{@next.inspect}"
     distance = Math.sqrt(((@next.point.x - @x) ** 2) + ((@next.point.y - @y) ** 2))
     @dx = (@next.point.x - @x) / (distance / 2.0)
     @dy = (@next.point.y - @y) / (distance / 2.0)
+  end
+
+  def next_candidates
+    links = @viz.crystal.neighbor_links
+    links.select{|l| l[0] == point || l[1] == point }.flatten.uniq.reject{|a| a == point }
   end
 
   def at_next_point?
