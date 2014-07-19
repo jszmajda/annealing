@@ -16,21 +16,39 @@ def draw
   @mover.draw
 end
 
+def mouse_pressed
+  x=mouse_x
+  y=mouse_y
+  closest = @viz.crystal.atoms.first
+  @viz.crystal.atoms.each do |a|
+    dx = a.point.x - mouse_x
+    dy = a.point.y - mouse_y
+    dist = dx.abs + dy.abs
+    odx = closest.point.x - mouse_x
+    ody = closest.point.y - mouse_y
+    odist = odx.abs + ody.abs
+    closest = a if dist < odist
+  end
+  @mover.point = closest
+end
+
 class Mover
-  attr_accessor :viz
+  attr_accessor :viz, :x, :y, :point
   def initialize(viz)
     @viz = viz
     @x = 0
     @y = 0
     @rad = 15
-    choose_first_point
-    @next = @point
-    choose_next_point
+  end
+  def point=(p)
+    if p
+      @point = p
+      @x = p.point.x
+      @y = p.point.y
+    end
   end
 
   def draw
-    update
-
     fill(0,150,250)
     ellipse(@x,@y, @rad + 5,@rad + 5)
     fill(0,190,255)
@@ -41,50 +59,14 @@ class Mover
       stroke(200,100,0)
       ellipse(cand.point.x, cand.point.y, 10,10)
     end
-    fill(0)
-    stroke(200,200,0)
-    ellipse(@next.point.x, @next.point.y, 13,13)
-  end
-
-  def update
-    choose_next_point if at_next_point?
-    move_to_next_point
-  end
-
-  def move_to_next_point
-    @x += @dx
-    @y += @dy
-  end
-
-  attr_reader :point
-
-  def choose_next_point
-    @point = @next
-
-    #puts "starting choose_next_point"
-    #puts "candidates: #{candidates.inspect}"
-    @next = next_candidates.sample
-    #puts "@point is #{@point.inspect} Next is #{@next.inspect}"
-    distance = Math.sqrt(((@next.point.x - @x) ** 2) + ((@next.point.y - @y) ** 2))
-    @dx = (@next.point.x - @x) / (distance / 2.0)
-    @dy = (@next.point.y - @y) / (distance / 2.0)
   end
 
   def next_candidates
+    return [] unless point
     links = @viz.crystal.neighbor_links
     links.select{|l| l[0] == point || l[1] == point }.flatten.uniq.reject{|a| a == point }
   end
 
-  def at_next_point?
-    @next.nil? || ( (@x - @next.point.x).abs < 2 && (@y - @next.point.y).abs < 2 )
-  end
-
-  def choose_first_point
-    a = @viz.crystal.atoms.sample
-    @x = a.point.x
-    @y = a.point.y
-    @point = a
-  end
 end
 
 class Viz
