@@ -17,6 +17,13 @@ module Annealing
       @atoms = []
     end
 
+    def randomly_place_people(people)
+      raise("count mismatch") unless people.length == atoms.length
+      atoms.zip(people).each do |a,p|
+        a.person = p
+      end
+    end
+
     def atom_at(x,y)
       a = Atom.new
       a.point = Point.new(x,y)

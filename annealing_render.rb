@@ -9,7 +9,7 @@ def setup
 end
 
 def draw
-  background(60,50,55)
+  background(230)
 
   @viz.draw
 end
@@ -20,14 +20,12 @@ class Viz
     @park = Annealing::SVG.svg_to_polygons(File.read("spec/park.svg"))
     @ptri = @park.triangulate
     @tick = 0
-
+    people = Annealing::Person.load_people
+    @parts = @park.allocate(people.length) # @parts is an array of PolyGroups
+    crystal.randomly_place_people(people)
   end
 
   def draw
-    if(@lna != num_alloc)
-      @parts = @park.allocate(num_alloc) # @parts is an array of PolyGroups
-      @lna = num_alloc
-    end
     ptri
     #mesh
     draw_crystal
@@ -43,11 +41,6 @@ class Viz
     center_links crystal.neighbor_links
   end
 
-  def num_alloc
-    #[@tick, 150].min
-    150
-  end
-
   def centers(atoms)
     stroke_weight(3)
     stroke(80,180,200)
@@ -60,8 +53,10 @@ class Viz
 
   def center_links(links)
     stroke_weight(2)
-    stroke(254,0,0)
+    #stroke(254,0,0)
     links.each do |a,b|
+      color = a.person.similarity_color(b.person)
+      stroke(*color)
       line(a.point.x, a.point.y, b.point.x, b.point.y)
     end
   end
@@ -87,9 +82,9 @@ class Viz
   end
 
   def ptri
-    fill(070,120,070)
+    fill(255)
     stroke_weight(2)
-    stroke(120,100,100)
+    stroke(255)
     @ptri.polys.each do |p|
       triangle(
         p.points[0].x, p.points[0].y,

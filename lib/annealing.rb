@@ -1,6 +1,7 @@
 require 'nokogiri'
 require 'annealing/crystal'
 require 'annealing/atom'
+require 'annealing/person'
 require 'annealing/polygon'
 require 'annealing/point'
 require 'annealing/svg'

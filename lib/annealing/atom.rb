@@ -1,6 +1,6 @@
 module Annealing
   class Atom
-    attr_accessor :crystal, :point
+    attr_accessor :crystal, :point, :person
 
     def self.at(x,y)
       a = Atom.new
