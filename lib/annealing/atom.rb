@@ -13,6 +13,10 @@ module Annealing
     end
     alias :== :eq
 
+    def <=>(other)
+      (point.x + point.y) <=> (other.point.x + other.point.y)
+    end
+
     def inspect
       "a.#{point.inspect}"
     end
