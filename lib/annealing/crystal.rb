@@ -24,6 +24,60 @@ module Annealing
       end
     end
 
+    def energy
+      neighbor_links.map {|a,b| a.person.mismatches(b.person) }.inject(0){|s,e| s + e }
+    end
+
+    # swap two people randomly
+    # so much simpler than in the tutorial!!
+    def motion
+      links = walking_neighbors(4)
+      swap = links.sample
+      a0 = swap[0]
+      a1 = swap[1]
+      p = a0.person
+      a0.person = a1.person
+      a1.person = p
+      [a0,a1]
+    end
+    def rollback(changed)
+      a0, a1 = changed
+      p = a0.person
+      a0.person = a1.person
+      a1.person = p
+    end
+
+    # TemperatureFunction = Int -> Int -> Float
+    def temperature(current, max)
+      50 * Math.exp(0 - (5 * ( current / max.to_f)))
+    end
+
+    # TransitionProbabilityFunction = Int -> Int -> Float -> Float
+    def transition_probability(e1, e2, temperature)
+      Math.exp( (e1 - e2) / temperature )
+    end
+
+    def anneal(cur_time, max_time)
+      anneal_tick(temperature(cur_time, max_time))
+    end
+
+    def anneal_tick(t)
+      current_state_energy = energy
+      inspected = motion
+      next_state_energy = energy
+
+      tp = transition_probability( current_state_energy, next_state_energy, t)
+
+      n = rand(0.0..1.0)
+      if n < tp
+        # keep next state
+        inspected
+      else
+        rollback(inspected)
+        []
+      end
+    end
+
     def atom_at(x,y)
       a = Atom.new
       a.point = Point.new(x,y)
@@ -40,16 +94,15 @@ module Annealing
       @neighbor_links ||= build_neighbor_links
     end
 
-    # let shortestLinks :: Int -> [Link] -> [Link]
-    # shortestLinks n = (take n).(sortBy $ comparing linkLength)
-    #  where linkLength [a,b] = distance a b
     def walking_neighbors(min_points)
+      @walking_neighbors ||= begin
       my_neighbors = ->(a) do
         all_links = (atoms - [a]).map{|atom| [a, atom].sort }
         sorted = sort_links(all_links)
         sorted[0...min_points]
       end
       atoms.flat_map(&my_neighbors).uniq
+                             end
     end
 
     private

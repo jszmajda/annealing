@@ -20,16 +20,52 @@ class Viz
     @park = Annealing::SVG.svg_to_polygons(File.read("spec/park.svg"))
     @ptri = @park.triangulate
     @tick = 0
+    @done = false
     people = Annealing::Person.load_people
     @parts = @park.allocate(people.length) # @parts is an array of PolyGroups
     crystal.randomly_place_people(people)
+    @start_energy = crystal.energy
+    @time_allowed = 5000
+    puts "Starting energy: #{crystal.energy}"
+    puts "Starting temperature: #{crystal.temperature(500,500)}"
   end
 
   def draw
     ptri
     #mesh
     draw_crystal
-    @tick += 1
+    #puts "annealing tick #{@tick}"
+    inspected = []
+    #50.times do
+    unless @done
+      inspected = crystal.anneal(@tick, @time_allowed)
+      @tick += 1
+      #end
+      inspected.each do |atom|
+        stroke(0)
+        fill(0,0,0,0)
+        ellipse(atom.point.x, atom.point.y, 20, 20)
+      end
+    end
+    progress_bar(@tick, @time_allowed)
+    @done = true if @tick > @time_allowed
+    textSize(32)
+    fill(0)
+    text("Current Energy: #{crystal.energy}", 10, 400)
+    text("Current Temperature: #{format("%0.3f", crystal.temperature(@tick, @time_allowed))}", 10, 430)
+    text("Start Energy: #{@start_energy}", 10, 460)
+  end
+
+  def progress_bar(from, to)
+    stroke_weight(1)
+    stroke(150)
+    fill(255)
+    rect(10,340,600,15)
+
+    pct = (from / to.to_f)
+    tx = 600 * pct
+    fill(150)
+    rect(10,340,tx,15)
   end
 
   def crystal
