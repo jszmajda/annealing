@@ -25,8 +25,10 @@ class Viz
     @parts = @park.allocate(people.length) # @parts is an array of PolyGroups
     crystal.randomly_place_people(people)
     @start_energy = crystal.energy
-    @time_allowed = 5000
+    @time_allowed = 100_000
     puts "Starting energy: #{crystal.energy}"
+    @step = 50
+    @sleep = 0
     puts "Starting temperature: #{crystal.temperature(500,500)}"
   end
 
@@ -38,11 +40,13 @@ class Viz
     inspected = []
     #50.times do
     unless @done
-      inspected = crystal.anneal(@tick, @time_allowed)
-      @tick += 1
-      #end
-      inspected.each do |atom|
-        stroke(0)
+      @step.times do
+        inspected += crystal.anneal(@tick, @time_allowed)
+        @tick += 1
+      end
+
+      inspected.uniq.each do |atom|
+        stroke(180)
         fill(0,0,0,0)
         ellipse(atom.point.x, atom.point.y, 20, 20)
       end
@@ -54,6 +58,7 @@ class Viz
     text("Current Energy: #{crystal.energy}", 10, 400)
     text("Current Temperature: #{format("%0.3f", crystal.temperature(@tick, @time_allowed))}", 10, 430)
     text("Start Energy: #{@start_energy}", 10, 460)
+    sleep @sleep
   end
 
   def progress_bar(from, to)
