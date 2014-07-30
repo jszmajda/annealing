@@ -1,24 +1,21 @@
 $: << "."
 $: << "./lib"
 require 'annealing'
-WID=640
-HEI=480
+
 def setup
-  size WID,HEI
+  size 640, 480
   @viz = Viz.new
 end
 
 def draw
   background(230)
-
   @viz.draw
 end
 
 class Viz
-
   def initialize
     @park = Annealing::SVG.svg_to_polygons(File.read("spec/park.svg"))
-    @ptri = @park.triangulate
+    @park_triangles = @park.triangulate
     @tick = 0
     @done = false
     people = Annealing::Person.load_people
@@ -33,10 +30,10 @@ class Viz
   end
 
   def draw
-    ptri
-    #mesh
+    draw_polygon_triangles(@park_triangles)
+    #draw_mesh
     draw_crystal
-    #puts "annealing tick #{@tick}"
+
     inspected = []
     #50.times do
     unless @done
@@ -51,17 +48,18 @@ class Viz
         ellipse(atom.point.x, atom.point.y, 20, 20)
       end
     end
-    progress_bar(@tick, @time_allowed)
     @done = true if @tick > @time_allowed
     textSize(32)
     fill(0)
     text("Current Energy: #{crystal.energy}", 10, 400)
     text("Current Temperature: #{format("%0.3f", crystal.temperature(@tick, @time_allowed))}", 10, 430)
     text("Start Energy: #{@start_energy}", 10, 460)
+
+    draw_progress_bar(@tick, @time_allowed)
     sleep @sleep
   end
 
-  def progress_bar(from, to)
+  def draw_progress_bar(from, to)
     stroke_weight(1)
     stroke(150)
     fill(255)
@@ -102,7 +100,7 @@ class Viz
     end
   end
 
-  def mesh
+  def draw_mesh
     stroke_weight(1)
     stroke(230)
     no_fill
@@ -112,21 +110,14 @@ class Viz
         vertex(p.x, p.y)
       end
       end_shape
-      #pg.polys.each do |p|
-      #  triangle(
-      #    p.points[0].x, p.points[0].y,
-      #    p.points[1].x, p.points[1].y,
-      #    p.points[2].x, p.points[2].y
-      #  )
-      #end
     end
   end
 
-  def ptri
+  def draw_polygon_triangles(ptri)
     fill(255)
     stroke_weight(2)
     stroke(255)
-    @ptri.polys.each do |p|
+    ptri.polys.each do |p|
       triangle(
         p.points[0].x, p.points[0].y,
         p.points[1].x, p.points[1].y,
