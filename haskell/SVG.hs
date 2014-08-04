@@ -1,7 +1,8 @@
 module SVG (writePoint, writePolygon, writePolygons, colorize, readPoint, readPolygon, readPolygons) where
 
-import PicnicTypes
-import Text.Regex
+import Polygon
+import Text.Regex (matchRegex, mkRegex, splitRegex)
+import Color
 
 writePoint :: Point -> String
 writePoint (x,y) = (show x)++","++(show y)++" "
@@ -14,7 +15,6 @@ writePolygons p = "<svg xmlns=\"http://www.w3.org/2000/svg\">"++(concatMap write
 
 colorize :: Color -> [Polygon] -> [(Color,Polygon)]
 colorize = zip.repeat
-
 
 readPoint :: String -> Point
 readPoint s | Just [x,y] <- matchRegex (mkRegex "([0-9.]+),([0-9.]+)") s = (read x,read y)
