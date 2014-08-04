@@ -2,7 +2,7 @@ module Polygon (
   Point, Polygon
 , triangulate, clipTriangle
 , distance, slice, sliceX, sliceY
-, allocatePeople, findLotCenter, makeDot
+, allocatePeople, findLotCenter, makeDot, centers
 ) where
 
 import Data.List (partition, minimumBy)
@@ -68,6 +68,11 @@ allocatePeople n t = let (t1,t2) = halveTriangles n t
                          f = round $ (fromIntegral n)*a1/(a1+a2)
                      in (allocatePeople f t1)++(allocatePeople (n-f) t2)
 
+centers :: [Polygon] -> [a] -> [Point]
+centers polys list = map findLotCenter lots
+  where
+    lots      = allocatePeople (length list) triangles
+    triangles = concatMap triangulate polys
 
 findLotCenter :: [Polygon] -> Point
 findLotCenter p = let (l,t,r,b) = boundingRect p

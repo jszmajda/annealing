@@ -1,5 +1,5 @@
 module Park (
-  Link, Person, Placement
+  Link, Person, Placement, Park, People
 , shortestLinks, sittingNeighbors, walkingNeighbors
 , similarityLine
 , picnicEnergy, picnicTemperature
@@ -16,7 +16,9 @@ import System.Random (randomR)
 
 type Link      = [Point]
 type Person    = [Int]
+type People    = [Person]
 type Placement = [(Point,Person)]
+type Park      = [Polygon]
 
 shortestLinks :: Int -> [Link] -> [Link]
 shortestLinks n = (take n).(sortBy $ comparing linkLength)
