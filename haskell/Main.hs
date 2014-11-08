@@ -7,16 +7,16 @@ import System.Random (getStdGen)
 annealTime :: Int
 annealTime = 100
 
--- data PicnicEnv = PicnicEnv {
---   people  :: [Park.Person]
--- , park    :: [Polygon]
--- , centers :: [Point]
--- , sitting :: [Link]
--- , walking :: [Link]
--- }
+data PicnicEnv = PicnicEnv {
+  pePeople  :: [Park.Person]
+, pePark    :: [PG.Polygon]
+, peCenters :: [PG.Point]
+, peSitting :: [Park.Link]
+, peWalking :: [Park.Link]
+}
 
-main :: IO ()
-main = do
+buildPEnv :: IO PicnicEnv
+buildPEnv = do
   people_text <- readFile "people.txt"
   park_data   <- readFile "park.svg"
 
@@ -26,17 +26,27 @@ main = do
   let sitting = Park.sittingNeighbors 4 cnts
   let walking = Park.walkingNeighbors 4 cnts
 
-  let startingPlacement = zip cnts people
+  return $ PicnicEnv people park cnts sitting walking
 
-  putStrLn $ "Number of people coming: " ++ show (length people)
+showBeginningEnv :: PicnicEnv -> Park.Placement -> IO ()
+showBeginningEnv pEnv startingPlacement = do
+  putStrLn $ "Number of people coming: "   ++ show (length (pePeople pEnv))
   putStrLn $ "number of annealing steps: " ++ show annealTime
-  putStrLn $ "starting energy: "         ++ show (Park.picnicEnergy sitting startingPlacement)
-  putStrLn $ "starting temperature: "    ++ show (Park.picnicTemperature annealTime annealTime)
+  putStrLn $ "starting energy: "           ++ show (Park.picnicEnergy (peSitting pEnv) startingPlacement)
+  putStrLn $ "starting temperature: "      ++ show (Park.picnicTemperature annealTime annealTime)
 
-  let aeEnv = SA.AnnealEnv (Park.picnicEnergy sitting)
+main :: IO ()
+main = do
+  pEnv <- buildPEnv
+
+  let startingPlacement = zip (peCenters pEnv) (pePeople pEnv)
+
+  showBeginningEnv pEnv startingPlacement
+
+  let aeEnv = SA.AnnealEnv (Park.picnicEnergy (peSitting pEnv))
                            Park.picnicTemperature
                            Park.picnicTransitionalProbability
-                           (Park.picnicMotion walking)
+                           (Park.picnicMotion (peWalking pEnv))
 
   randomGen <- getStdGen
 
@@ -46,8 +56,8 @@ main = do
                          randomGen
                          startingPlacement
 
-  writeFile "final.svg" $ SVG.writePolygons $ map (Park.similarityLine finalPlacement) sitting
+  writeFile "final.svg" $ SVG.writePolygons $ map (Park.similarityLine finalPlacement) (peSitting pEnv)
 
   putStrLn "Done!"
-  putStrLn $ "final energy: " ++ show (Park.picnicEnergy sitting finalPlacement)
+  putStrLn $ "final energy: " ++ show (Park.picnicEnergy (peSitting pEnv) finalPlacement)
   putStrLn $ "final temperature: " ++ show (Park.picnicTemperature 0 annealTime)
