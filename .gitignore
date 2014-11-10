@@ -1,0 +1,5 @@
+*.hi
+*.o
+haskell/Main
+.DS_Store
+
