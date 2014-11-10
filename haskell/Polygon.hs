@@ -16,14 +16,15 @@ triangulate (a:b:c:xs) = [a,b,c]:triangulate (a:c:xs)
 triangulate _ = []
 
 clipTriangle :: (Point -> Point -> Point) -> [Point] -> [Point] -> [Polygon]
-clipTriangle i [] [a,b,c] = []
-clipTriangle i [a]  [b,c] = [[a,i a b,i a c]]
-clipTriangle i [a,b]  [c] = [[a,i a c,b],[b,i a c,i b c]]
-clipTriangle i [a,b,c] [] = [[a,b,c]]
+clipTriangle _ [] [_,_,_] = []
+clipTriangle f [a]  [b,c] = [[a,f a b,f a c]]
+clipTriangle f [a,b]  [c] = [[a,f a c,b],[b,f a c,f b c]]
+clipTriangle _ [a,b,c] [] = [[a,b,c]]
+clipTriangle _ _ _ = undefined -- exhausting patterns
 
 slice :: (Point -> Bool) -> (Point -> Point -> Point) -> [Polygon] -> ([Polygon],[Polygon])
 slice f i t = (clip f,clip $ not.f)
-  where clip g = concatMap ((uncurry $ clipTriangle i).(partition g)) t
+  where clip g = concatMap (uncurry (clipTriangle i) . partition g) t
 
 sliceX :: Float -> [Polygon] -> ([Polygon],[Polygon])
 sliceX x = slice ((x >).fst) interpolateX
@@ -48,25 +49,26 @@ halveTriangles n p = let (l,t,r,b) = boundingRect p
                         else sliceY ((b*h+t*(f-h))/f) p
 
 distance :: Point -> Point -> Float
-distance p1 p2 = sqrt (deltax*deltax+deltay*deltay)
-    where deltax = (fst p1)-(fst p2)
-          deltay = (snd p1)-(snd p2)
+distance p1 p2 = sqrt (dx * dx + dy * dy)
+    where dx = fst p1 - fst p2
+          dy = snd p1 - snd p2
 
 area :: Polygon -> Float
 area [a,b,c] = let x = distance a b
                    y = distance b c
                    z = distance c a
-                   s = (x+y+z)/2
-               in sqrt (s*(s-x)*(s-y)*(s-z))
+                   s = (x + y + z) / 2
+               in sqrt (s * (s - x) * (s - y) * (s - z))
+area _ = undefined -- exhausting patterns
 
 allocatePeople :: Int -> [Polygon] -> [[Polygon]]
-allocatePeople 0 t = []
-allocatePeople 1 t = [t]
-allocatePeople n t = let (t1,t2) = halveTriangles n t
-                         a1      = sum $ map area t1
-                         a2      = sum $ map area t2
-                         f = round $ (fromIntegral n)*a1/(a1+a2)
-                     in (allocatePeople f t1)++(allocatePeople (n-f) t2)
+allocatePeople 0 _ = []
+allocatePeople 1 gon = [gon]
+allocatePeople n gon = let (t1,t2) = halveTriangles n gon
+                           a1      = sum $ map area t1
+                           a2      = sum $ map area t2
+                           f = round $ fromIntegral n * a1 / (a1 + a2)
+                     in allocatePeople f t1 ++ allocatePeople (n - f) t2
 
 centers :: [Polygon] -> [a] -> [Point]
 centers polys list = map findLotCenter lots
@@ -79,8 +81,7 @@ findLotCenter p = let (l,t,r,b) = boundingRect p
                       m@(x,y)   = ((r+l)/2,(b+t)/2)
                       (lh,rh)   = sliceX x p
                       (th,bh)   = sliceY y $ lh ++ rh
-                      centerOrder p1 p2 = compare (distance p1 m) (distance p2 m)
                   in minimumBy (comparing $ distance m) $ concat $ th ++ bh
 
 makeDot :: Point -> Polygon
-makeDot (x,y) = [(x-2,y-2),(x+2,y-2),(x+2,y+2),(x-2,y+2)]
+makeDot (x,y) = [(x - 2,y - 2), (x + 2,y - 2), (x + 2,y + 2), (x - 2,y + 2)]

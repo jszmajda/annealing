@@ -9,14 +9,13 @@ annealTime = 100
 
 data PicnicEnv = PicnicEnv {
   pePeople  :: [Park.Person]
-, pePark    :: [PG.Polygon]
 , peCenters :: [PG.Point]
 , peSitting :: [Park.Link]
 , peWalking :: [Park.Link]
 }
 
-buildPEnv :: IO PicnicEnv
-buildPEnv = do
+buildPicnicEnv :: IO PicnicEnv
+buildPicnicEnv = do
   people_text <- readFile "people.txt"
   park_data   <- readFile "park.svg"
 
@@ -26,38 +25,36 @@ buildPEnv = do
   let sitting = Park.sittingNeighbors 4 cnts
   let walking = Park.walkingNeighbors 4 cnts
 
-  return $ PicnicEnv people park cnts sitting walking
+  return $ PicnicEnv people cnts sitting walking
 
-showBeginningEnv :: PicnicEnv -> Park.Placement -> IO ()
-showBeginningEnv pEnv startingPlacement = do
-  putStrLn $ "Number of people coming: "   ++ show (length (pePeople pEnv))
-  putStrLn $ "number of annealing steps: " ++ show annealTime
-  putStrLn $ "starting energy: "           ++ show (Park.picnicEnergy (peSitting pEnv) startingPlacement)
-  putStrLn $ "starting temperature: "      ++ show (Park.picnicTemperature annealTime annealTime)
+buildAnnealEnv :: PicnicEnv -> SA.AnnealEnv Park.Placement
+buildAnnealEnv pEnv =
+  SA.AnnealEnv
+    (Park.picnicEnergy (peSitting pEnv))
+    Park.picnicTemperature
+    Park.picnicTransitionalProbability
+    (Park.picnicMotion (peWalking pEnv))
+
+showEnv :: PicnicEnv -> Park.Placement -> Int -> IO ()
+showEnv pEnv placement time = do
+  putStrLn $ "energy: " ++ show (Park.picnicEnergy (peSitting pEnv) placement)
+  putStrLn $ "temperature: " ++ show (Park.picnicTemperature time annealTime)
 
 main :: IO ()
 main = do
-  pEnv <- buildPEnv
-
-  let startingPlacement = zip (peCenters pEnv) (pePeople pEnv)
-
-  showBeginningEnv pEnv startingPlacement
-
-  let aeEnv = SA.AnnealEnv (Park.picnicEnergy (peSitting pEnv))
-                           Park.picnicTemperature
-                           Park.picnicTransitionalProbability
-                           (Park.picnicMotion (peWalking pEnv))
-
+  pEnv      <- buildPicnicEnv
   randomGen <- getStdGen
 
-  let finalPlacement = SA.anneal
-                         aeEnv
-                         annealTime
-                         randomGen
-                         startingPlacement
+  let startingPlacement = zip (peCenters pEnv) (pePeople pEnv)
+  let annealEnv = buildAnnealEnv pEnv
+
+  putStrLn $ "Number of people coming: "   ++ show (length (pePeople pEnv))
+  putStrLn $ "number of annealing steps: " ++ show annealTime
+  showEnv pEnv startingPlacement annealTime
+
+  let finalPlacement = SA.anneal annealEnv annealTime randomGen startingPlacement
 
   writeFile "final.svg" $ SVG.writePolygons $ map (Park.similarityLine finalPlacement) (peSitting pEnv)
 
   putStrLn "Done!"
-  putStrLn $ "final energy: " ++ show (Park.picnicEnergy (peSitting pEnv) finalPlacement)
-  putStrLn $ "final temperature: " ++ show (Park.picnicTemperature 0 annealTime)
+  showEnv pEnv finalPlacement 0
