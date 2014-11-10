@@ -81,7 +81,6 @@ module Annealing::Simul
     def atom_at(x,y)
       a = Atom.new
       a.point = Annealing::Geometry::Point.new(x,y)
-      a.crystal = self
       atoms << a
     end
 

@@ -16,7 +16,6 @@ module Annealing::Simul
 
         a = Atom.new
         a.point = Annealing::Geometry::Point.new(1,2)
-        a.crystal = c
 
         expect(c.atoms).to eq([a])
       end

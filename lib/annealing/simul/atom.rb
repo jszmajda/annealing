@@ -1,5 +1,5 @@
 module Annealing::Simul
-  class Atom < Struct.new(:crystal, :point, :person)
+  class Atom < Struct.new(:point, :person)
     def self.at(x,y)
       a = Atom.new
       a.point = Annealing::Geometry::Point.new(x,y)
