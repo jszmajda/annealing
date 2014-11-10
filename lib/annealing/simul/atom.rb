@@ -12,7 +12,7 @@ module Annealing::Simul
     alias :== :eq
 
     def <=>(other)
-      (point.x + point.y) <=> (other.point.x + other.point.y)
+      point <=> other.point
     end
 
     def inspect
