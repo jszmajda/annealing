@@ -1,9 +1,9 @@
 require 'spec_helper'
-module Annealing
+module Annealing::Geometry
   describe PolyGroup do
     let(:park) do
       file = File.join(File.dirname(__FILE__), '..', 'park.svg')
-      SVG.svg_to_polygons(File.read(file))
+      Annealing::Drawing::SVG.svg_to_polygons(File.read(file))
     end
     let(:complex) do
       PolyGroup.new([

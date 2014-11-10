@@ -1,5 +1,5 @@
 require 'spec_helper'
-module Annealing
+module Annealing::Simul
   describe Atom do
     it "has a point" do
       a = Atom.new
@@ -15,19 +15,19 @@ module Annealing
       c2 = Crystal.new
 
       a1 = Atom.new
-      a1.point = Point.new(1,2)
+      a1.point = Annealing::Geometry::Point.new(1,2)
       a1.crystal = c1
 
       a2 = Atom.new
-      a2.point = Point.new(2,3)
+      a2.point = Annealing::Geometry::Point.new(2,3)
       a2.crystal = c1
 
       a3 = Atom.new
-      a3.point = Point.new(1,2)
+      a3.point = Annealing::Geometry::Point.new(1,2)
       a3.crystal = c1
 
       a4 = Atom.new
-      a4.point = Point.new(1,2)
+      a4.point = Annealing::Geometry::Point.new(1,2)
       a4.crystal = c2
 
       expect(a1).to_not eq(a2)
@@ -38,7 +38,7 @@ module Annealing
     describe "#at" do
       it "builds an Atom at a specified point with a nil crystal" do
         a = Atom.at(1,2)
-        expect(a.point).to   eq(Point.new(1,2))
+        expect(a.point).to   eq(Annealing::Geometry::Point.new(1,2))
         expect(a.crystal).to be_nil
       end
     end

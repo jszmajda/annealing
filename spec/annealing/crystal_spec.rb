@@ -1,5 +1,5 @@
 require 'spec_helper'
-module Annealing
+module Annealing::Simul
   describe Crystal do
 
     let(:sample) do
@@ -15,7 +15,7 @@ module Annealing
         c.atom_at(1,2)
 
         a = Atom.new
-        a.point = Point.new(1,2)
+        a.point = Annealing::Geometry::Point.new(1,2)
         a.crystal = c
 
         expect(c.atoms).to eq([a])
@@ -24,8 +24,8 @@ module Annealing
 
     describe "#build_from_polygroups" do
       it "constructs a crystal from a list of PolyGroups" do
-        pgs = PolyGroup.new([
-          Polygon.make(
+        pgs = Annealing::Geometry::PolyGroup.new([
+          Annealing::Geometry::Polygon.make(
             [106.7619, 131.19048],
             [17.190476, 96.809524],
             [22.619047, 71.47619],

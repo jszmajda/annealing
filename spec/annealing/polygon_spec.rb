@@ -1,5 +1,5 @@
 require 'spec_helper'
-module Annealing
+module Annealing::Geometry
   describe Polygon do
     it "is a list of points" do
       p = Polygon.new([

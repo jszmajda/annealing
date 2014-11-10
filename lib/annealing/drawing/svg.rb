@@ -1,8 +1,8 @@
 module Annealing::Drawing
   module SVG
+    SVG_HEADER = %q{<svg xmlns="http://www.w3.org/2000/svg">}
+    SVG_FOOTER = %q{</svg>}
     class << self
-      SVG_HEADER = %q{<svg xmlns="http://www.w3.org/2000/svg">}
-      SVG_FOOTER = %q{</svg>}
       def polygons_to_svg(*polygroups)
         "#{ SVG_HEADER }#{ polygroups.map{|g| pg(g) }.join }#{ SVG_FOOTER }"
       end

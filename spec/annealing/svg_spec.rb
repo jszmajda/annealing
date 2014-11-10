@@ -1,5 +1,5 @@
 require 'spec_helper'
-module Annealing
+module Annealing::Drawing
   describe SVG do
     let(:sample_svg) {
       %q{<svg xmlns="http://www.w3.org/2000/svg"><polygon points="100,100 200,100 200,200 100,200" style="fill:#cccccc;stroke:rgb(20,250,250);stroke-width:2"/><polygon points="200,200 300,200 300,300 200,300" style="fill:#cccccc;stroke:rgb(20,250,250);stroke-width:2"/></svg>}.strip
@@ -15,18 +15,18 @@ module Annealing
       EOT
     }
     let(:sample_polys) {
-      PolyGroup.new([
-        Polygon.new([
-          Point.new(100,100),
-          Point.new(200,100),
-          Point.new(200,200),
-          Point.new(100,200),
+      Annealing::Geometry::PolyGroup.new([
+        Annealing::Geometry::Polygon.new([
+          Annealing::Geometry::Point.new(100,100),
+          Annealing::Geometry::Point.new(200,100),
+          Annealing::Geometry::Point.new(200,200),
+          Annealing::Geometry::Point.new(100,200),
         ]),
-        Polygon.new([
-          Point.new(200,200),
-          Point.new(300,200),
-          Point.new(300.0,300),
-          Point.new(200,300),
+        Annealing::Geometry::Polygon.new([
+          Annealing::Geometry::Point.new(200,200),
+          Annealing::Geometry::Point.new(300,200),
+          Annealing::Geometry::Point.new(300.0,300),
+          Annealing::Geometry::Point.new(200,300),
         ]),
       ])
     }
@@ -35,14 +35,14 @@ module Annealing
       expect(output).to eq sample_svg
     end
     it "can make a box poly" do
-      pg = PolyGroup.new([
-        Polygon.make(
+      pg = Annealing::Geometry::PolyGroup.new([
+        Annealing::Geometry::Polygon.make(
           [3 , 3] , [3 , -3],
           [-3, -3], [-3, 3]
         )
       ])
       pg.color = 'black'
-      expect(SVG.box_at(Point.new(0,0))).to eq(pg)
+      expect(SVG.box_at(Annealing::Geometry::Point.new(0,0))).to eq(pg)
     end
     it "reads a simple SVG into a list of Polygons" do
       polys = SVG.svg_to_polygons(sample_svg)
@@ -50,8 +50,8 @@ module Annealing
     end
 
     it "reads a slightly more complex SVG into a list of Polygons" do
-      ps = PolyGroup.new([
-        Polygon.make(
+      ps = Annealing::Geometry::PolyGroup.new([
+        Annealing::Geometry::Polygon.make(
           [106.7619, 131.19048],
           [17.190476, 96.809524],
           [22.619047, 71.47619],
