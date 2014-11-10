@@ -1,4 +1,4 @@
-module Annealing
+module Annealing::Geometry
   class PolyGroup
     attr_accessor :polys, :color, :fill
     def initialize(polys)

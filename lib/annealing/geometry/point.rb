@@ -1,4 +1,4 @@
-module Annealing
+module Annealing::Geometry
   class Point
     attr_accessor :x, :y
     def initialize(x,y)

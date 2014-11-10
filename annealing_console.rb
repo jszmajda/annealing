@@ -2,14 +2,15 @@ $: << "."
 $: << "./lib"
 require 'annealing'
 
-park = Annealing::SVG.svg_to_polygons(File.read("spec/park.svg"))
+park = Annealing::Drawing::SVG.svg_to_polygons(File.read("spec/park.svg"))
 
 people = Annealing.load_people
 parts = park.allocate(people.length) # @parts is an array of PolyGroups
-crystal = Annealing::Crystal.build_from_polygroups(parts)
+crystal = Annealing::Simul::Crystal.build_from_polygroups(parts)
 crystal.randomly_place_people(people)
 
-time_allowed = 5000
+#time_allowed = 5000
+time_allowed = 5
 
 puts "Starting energy: #{crystal.energy}"
 puts "Starting temperature: #{crystal.temperature(500,500)}"

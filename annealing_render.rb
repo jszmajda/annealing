@@ -17,7 +17,7 @@ end
 class Viz
 
   def initialize
-    @park = Annealing::SVG.svg_to_polygons(File.read("spec/park.svg"))
+    @park = Annealing::Drawing::SVG.svg_to_polygons(File.read("spec/park.svg"))
     @ptri = @park.triangulate
     @tick = 0
     @done = false
@@ -69,7 +69,7 @@ class Viz
   end
 
   def crystal
-    @crystal ||= Annealing::Crystal.build_from_polygroups(@parts)
+    @crystal ||= Annealing::Simul::Crystal.build_from_polygroups(@parts)
   end
 
   def draw_crystal
