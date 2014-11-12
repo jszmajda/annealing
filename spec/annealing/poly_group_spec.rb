@@ -126,28 +126,44 @@ module Annealing::Geometry
         it "divides the PolyGroup into equal parts" do
           result = PolyGroup.new([Polygon.make([0,0],[202,0],[204,200], [306,302], [110, 302])]).allocate(3)
           expected = [
-            PolyGroup.new([ Polygon.make([0.0,0.0], [153.0,0.0], [153.0,150.0]),
-                            Polygon.make([0.0,0.0], [153.0,151.0], [153.0,150.0]),
-                            Polygon.make([153.0,150.0], [153.0,151.0], [153.0,151.0]),
-                            Polygon.make([0.0,0.0], [153.0,151.0], [55.0,151.0]) ]), 
-            PolyGroup.new([ Polygon.make([153.0,151.0], [153.0,151.0], [153.0,151.0]),
-                            Polygon.make([153.0,151.0], [153.0,151.0], [110.0,302.0]),
-                            Polygon.make([110.0,302.0], [153.0,151.0], [55.0,151.0]),
-                            Polygon.make([110.0,302.0], [153.0,151.0], [153.0,302.0]) ]), 
-            PolyGroup.new([ Polygon.make([202.0,0.0], [153.0,0.0], [204.0,200.0]),
-                            Polygon.make([204.0,200.0], [153.0,0.0], [153.0,150.0]),
-                            Polygon.make([204.0,200.0], [153.0,150.0], [306.0,302.0]),
-                            Polygon.make([306.0,302.0], [153.0,150.0], [153.0,151.0]),
-                            Polygon.make([306.0,302.0], [153.0,151.0], [153.0,302.0]) ])
+
+            PolyGroup.new([
+              Polygon.make([0.0,0.0], [102.0,0.0], [102.0,100.0]),
+              Polygon.make([0.0,0.0], [102.0,100.0], [102.0,100.66666666666667]),
+              Polygon.make([0.0,0.0], [102.0,100.66666666666667], [102.0,280.03636363636366])
+            ]),
+            PolyGroup.new([
+              Polygon.make([202.0,0.0], [203.51,151.0], [102.0,0.0]),
+              Polygon.make([102.0,0.0], [203.51,151.0], [179.01,151.0]),
+              Polygon.make([102.0,0.0], [179.01,151.0], [102.0,100.0]),
+              Polygon.make([102.0,100.0], [179.01,151.0], [154.02,151.0]),
+              Polygon.make([102.0,100.0], [154.02,151.0], [153.5049504950495,151.0]),
+              Polygon.make([102.0,100.0], [153.5049504950495,151.0], [102.0,100.66666666666666]),
+              Polygon.make([102.0,100.66666666666666], [153.5049504950495,151.0], [153.0,151.0]),
+              Polygon.make([102.0,100.66666666666666], [153.0,151.0], [104.0,151.0]),
+              Polygon.make([102.0,100.66666666666666], [104.0,151.0], [102.0,151.0])
+            ]),
+            PolyGroup.new([
+              Polygon.make([204.0,200.0], [203.51,151.0], [179.01,151.0]),
+              Polygon.make([204.0,200.0], [179.01,151.0], [154.02,151.0]),
+              Polygon.make([204.0,200.0], [154.02,151.0], [306.0,302.0]),
+              Polygon.make([306.0,302.0], [154.02,151.0], [153.5049504950495,151.0]),
+              Polygon.make([306.0,302.0], [153.5049504950495,151.0], [153.0,151.0]),
+              Polygon.make([306.0,302.0], [153.0,151.0], [110.0,302.0]),
+              Polygon.make([110.0,302.0], [153.0,151.0], [104.0,151.0]),
+              Polygon.make([110.0,302.0], [104.0,151.0], [102.0,280.03636363636366]),
+              Polygon.make([102.0,280.03636363636366], [104.0,151.0], [102.0,151.0])
+            ])
+
           ]
           # Meh, comparing inspects. Not sure why == isn't working...
           expect(result.inspect).to eq(expected.inspect)
         end
 
-        it "handles a complex example" do
-=begin
-a1: 5440.04 a2: 5681.91
-=end
+      end
+
+      describe "#halve_triangles" do
+        it "cuts the polygroup into components" do
           pg = PolyGroup.new([
             Polygon.make([106.0,131.0],[17.0,96.0],[22.0,71.0]),
             Polygon.make([106.0,131.0],[22.0,71.0],[34.0,47.0]),
@@ -190,8 +206,6 @@ a1: 5440.04 a2: 5681.91
           expect(t2.area.round).to eq(5682)
           #result = pg.allocate(3)
           result = pg.halve_triangles(3)
-          File.open("res.svg",'wb'){|f| f << Annealing::Drawing::SVG.polygons_to_svg(*result) }
-          File.open("exp.svg",'wb'){|f| f << Annealing::Drawing::SVG.polygons_to_svg(t1,t2) }
           expect(flatten_fully(result)).to eq(flatten_fully([t1,t2]))
         end
       end
