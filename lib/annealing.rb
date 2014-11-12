@@ -1,8 +1,8 @@
 require 'nokogiri'
 
 module Annealing
-  def self.load_people
-    dat = File.read(File.join(File.dirname(__FILE__), %w{.. people.txt}))
+  def self.load_people(filename)
+    dat = File.read(filename)
     people = eval(dat)
     people.map{|answers| Annealing::Simul::Person.new(answers) }
   end

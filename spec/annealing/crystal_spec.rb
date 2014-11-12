@@ -73,9 +73,9 @@ module Annealing::Simul
       expect(c1).to_not eq(c3)
     end
 
-    describe "#neighbor_links" do
+    describe "#sitting_neighbors" do
       it "returns a list of links" do
-        links = sample.neighbor_links
+        links = sample.sitting_neighbors
 
         # links should all have both endpoints
         expect(links.reject {|a,b| a && b }).to eq([])

@@ -17,7 +17,7 @@ module Annealing::Simul
       @atoms = []
     end
 
-    def randomly_place_people(people)
+    def place_people(people)
       raise("count mismatch") unless people.length == atoms.length
       atoms.zip(people).each do |a,p|
         a.person = p
@@ -25,7 +25,7 @@ module Annealing::Simul
     end
 
     def energy
-      neighbor_links.map {|a,b| a.person.mismatches(b.person) }.inject(0){|s,e| s + e }
+      sitting_neighbors.map {|a,b| a.person.mismatches(b.person) }.inject(0){|s,e| s + e }
     end
 
     # swap two people randomly
@@ -89,8 +89,8 @@ module Annealing::Simul
     end
     alias :== :eq
 
-    def neighbor_links
-      @neighbor_links ||= build_neighbor_links
+    def sitting_neighbors
+      @sitting_neighbors ||= build_sitting_neighbors
     end
 
     def walking_neighbors(min_points)
@@ -115,11 +115,13 @@ module Annealing::Simul
     # using `combination` leads to performance superior to haskell
     # version, but I have to change the formula from 4 * points to
     # 2 * points to get a comparable output.
-    def build_neighbor_links
+    def build_sitting_neighbors
       all_links = atoms.combination(2)
       to_take = (2 * atoms.length)
       sorted = sort_links(all_links)
-      sorted[0...to_take].uniq
+      r = sorted[0...to_take].uniq
+      #puts r.inspect
+      r
     end
 
   end

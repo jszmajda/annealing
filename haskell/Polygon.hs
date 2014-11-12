@@ -5,8 +5,10 @@ module Polygon (
 , allocatePeople, findLotCenter, makeDot, centers
 ) where
 
-import Data.List (partition, minimumBy)
+import Data.List (partition, minimumBy, intercalate)
 import Data.Ord (comparing)
+import Debug.Trace
+import Text.Printf
 
 type Point     = (Float,Float)
 type Polygon   = [Point]
@@ -23,16 +25,16 @@ clipTriangle _ [a,b,c] [] = [[a,b,c]]
 clipTriangle _ _ _ = undefined -- exhausting patterns
 
 slice :: (Point -> Bool) -> (Point -> Point -> Point) -> [Polygon] -> ([Polygon],[Polygon])
-slice f i t = (clip f,clip $ not.f)
-  where clip g = concatMap (uncurry (clipTriangle i) . partition g) t
+slice part midpoint triangles = (clip part,clip $ not.part)
+  where clip g = concatMap (uncurry (clipTriangle midpoint) . partition g) triangles
 
 sliceX :: Float -> [Polygon] -> ([Polygon],[Polygon])
-sliceX x = slice ((x >).fst) interpolateX
-  where interpolateX (x1,y1) (x2,y2) = (x,y1+(y2-y1)*(x-x1)/(x2-x1))
+sliceX x = slice ((x >) . fst) midX
+  where midX (x1,y1) (x2,y2) = (x,y1+(y2-y1)*(x-x1)/(x2-x1))
 
 sliceY :: Float -> [Polygon] -> ([Polygon],[Polygon])
-sliceY y = slice ((y >).snd) interpolateY
-  where interpolateY (x1,y1) (x2,y2) = (x1+(x2-x1)*(y-y1)/(y2-y1),y)
+sliceY y = slice ((y >) . snd) midY
+  where midY (x1,y1) (x2,y2) = (x1+(x2-x1)*(y-y1)/(y2-y1),y)
 
 
 boundingRect :: [Polygon] -> (Float,Float,Float,Float)
@@ -67,13 +69,14 @@ allocatePeople 1 gon = [gon]
 allocatePeople n gon = let (t1,t2) = halveTriangles n gon
                            a1      = sum $ map area t1
                            a2      = sum $ map area t2
-                           f = round $ fromIntegral n * a1 / (a1 + a2)
+                           f = trace "---" $ traceShow n $ traceShow t2 $ traceShow t1 $ traceShowId $ trace ("a1: " ++ (show a1) ++ " a2: " ++ (show a2)) $ traceShow gon $ round $ fromIntegral n * a1 / (a1 + a2)
                      in allocatePeople f t1 ++ allocatePeople (n - f) t2
 
-centers :: [Polygon] -> [a] -> [Point]
-centers polys list = map findLotCenter lots
+centers :: [Polygon] -> Int -> [Point]
+centers polys num = map findLotCenter lots
   where
-    lots      = allocatePeople (length list) triangles
+    -- lots      = traceShowId' $ allocatePeople num triangles
+    lots      = allocatePeople num triangles
     triangles = concatMap triangulate polys
 
 findLotCenter :: [Polygon] -> Point
@@ -85,3 +88,14 @@ findLotCenter p = let (l,t,r,b) = boundingRect p
 
 makeDot :: Point -> Polygon
 makeDot (x,y) = [(x - 2,y - 2), (x + 2,y - 2), (x + 2,y + 2), (x - 2,y + 2)]
+
+traceShowId' :: [[Polygon]] -> [[Polygon]]
+traceShowId' a = trace (vval a) a
+
+vval :: [[Polygon]] -> String
+vval = concatMap shpg
+  where
+    shpg pg = "[" ++ concatMap shp pg ++ "\n]\n"
+    shp p   = "\n  [" ++ intercalate "," (map sht p) ++ "]"
+    sht (x,y) = "(" ++ cc x ++ "," ++ cc y ++ ")"
+    cc = printf "%0.3f"

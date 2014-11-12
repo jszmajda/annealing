@@ -34,31 +34,54 @@ module Annealing::Geometry
 
     def slice_x(x)
       partition = ->(p) { x > p.x }
-      centerpoint = ->(p1, p2) do
+      mid_y = ->(p1, p2) do
         Point.new( x, p1.y + (p2.y - p1.y) * (x - p1.x) / (p2.x - p1.x) )
       end
-      slice(partition, centerpoint, self.triangulate)
+      slice(partition, mid_y, self.triangulate)
     end
 
     def slice_y(y)
       partition = ->(p) { y > p.y }
-      centerpoint = ->(p1, p2) do
+      mid_x = ->(p1, p2) do
         Point.new( p1.x + (p2.x - p1.x) * (y - p1.y) / (p2.y - p1.y), y)
       end
-      slice(partition, centerpoint, self.triangulate)
+      slice(partition, mid_x, self.triangulate)
     end
 
     # returns an array of PolyGroups
     def allocate(n)
       return [PolyGroup.new([])]    if n <= 0
-      return [PolyGroup.new(polys)] if n == 1
-      t1, t2 = halve_triangles(n)
+      triangles = self.triangulate
+      return [PolyGroup.new(triangles.polys)] if n == 1
+      t1, t2 = triangles.halve_triangles(n)
       a1 = t1.area
       a2 = t2.area
       f = ((n.to_f * a1) / (a1 + a2)).round
+      puts "---"
+      puts n
+      puts t2.inspect
+      puts t1.inspect
+      puts "a1: #{a1} a2: #{a2}"
+      puts triangles.inspect
+      puts f
       alloc1 = t1.allocate(f)
       alloc2 = t2.allocate(n - f)
       alloc1 + alloc2
+    end
+
+    def halve_triangles(n)
+      l,t,r,b = bounding_rect
+      #puts self.inspect
+      #puts bounding_rect.inspect
+      #binding.pry
+
+      f = n.to_i
+      h = f / 2
+      if (r - l) > (b - t)
+        slice_x((r * h + l * (f - h)) / f)
+      else
+        slice_y((b * h + t * (f - h)) / f)
+      end
     end
 
     def area
@@ -107,17 +130,6 @@ module Annealing::Geometry
 
     def cross?(o, a, b)
       (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x) > 0
-    end
-
-    def halve_triangles(n)
-      l,t,r,b = bounding_rect
-      f = n.to_f
-      h = f / 2.0
-      if (r - l) > (b - t)
-        slice_x((r*h+l*(f-h))/f)
-      else
-        slice_y((b*h+t*(f-h))/f)
-      end
     end
 
     def bounding_rect

@@ -27,9 +27,17 @@ module Annealing::Geometry
     end
 
     def area
-      @area ||= (points.zip(points.rotate).inject(0) { |sum,(a,b)|
-        sum + (a.x * b.y - b.x * a.y)
-      } * 0.5).abs
+      #@area ||= (points.zip(points.rotate).inject(0) { |sum,(a,b)|
+      #  sum + (a.x * b.y - b.x * a.y)
+      #} * 0.5).abs
+      @area ||= begin
+                  a,b,c = *points
+                  x = a.distance_to b
+                  y = b.distance_to c
+                  z = c.distance_to a
+                  s = (x + y + z) / 2
+                  Math.sqrt (s * (s - x) * (s - y) * (s - z))
+                end
     end
 
     def inspect

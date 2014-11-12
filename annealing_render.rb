@@ -23,7 +23,7 @@ class Viz
     @done = false
     people = Annealing.load_people
     @parts = @park.allocate(people.length) # @parts is an array of PolyGroups
-    crystal.randomly_place_people(people)
+    crystal.place_people(people)
     @start_energy = crystal.energy
     @time_allowed = 5000
     puts "Starting energy: #{crystal.energy}"
@@ -74,7 +74,7 @@ class Viz
 
   def draw_crystal
     centers      crystal.atoms
-    center_links crystal.neighbor_links
+    center_links crystal.sitting_neighbors
   end
 
   def centers(atoms)

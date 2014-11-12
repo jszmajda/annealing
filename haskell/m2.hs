@@ -9,7 +9,7 @@ import Data.Function (on)
 
 annealTime :: Int
 -- annealTime = 100
-annealTime = 5
+annealTime = 2
 
 data PicnicEnv = PicnicEnv {
   pePeople  :: [Park.Person]
@@ -20,8 +20,8 @@ data PicnicEnv = PicnicEnv {
 
 buildPicnicEnv :: IO PicnicEnv
 buildPicnicEnv = do
-  people_text <- readFile "people.txt"
-  park_data   <- readFile "park.svg"
+  people_text <- readFile "../pl2.txt"
+  park_data   <- readFile "../pk2.svg"
 
   let people  = read people_text
   let park    = SVG.readPolygons park_data

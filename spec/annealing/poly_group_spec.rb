@@ -1,5 +1,14 @@
 require 'spec_helper'
+def flatten_fully(pgs)
+  pgs.flat_map(&:polys).flat_map(&:points)
+end
 module Annealing::Geometry
+  RSpec::Matchers.define :polymatch do |expected|
+    match do |actual|
+      actual.flat_map(&:polys).flat_map(&:points).sort == expected.flat_map(&:polys).flat_map(&:points).sort
+    end
+  end
+
   describe PolyGroup do
     let(:park) do
       file = File.join(File.dirname(__FILE__), '..', 'park.svg')
@@ -133,6 +142,57 @@ module Annealing::Geometry
           ]
           # Meh, comparing inspects. Not sure why == isn't working...
           expect(result.inspect).to eq(expected.inspect)
+        end
+
+        it "handles a complex example" do
+=begin
+a1: 5440.04 a2: 5681.91
+=end
+          pg = PolyGroup.new([
+            Polygon.make([106.0,131.0],[17.0,96.0],[22.0,71.0]),
+            Polygon.make([106.0,131.0],[22.0,71.0],[34.0,47.0]),
+            Polygon.make([106.0,131.0],[34.0,47.0],[46.0,39.0]),
+            Polygon.make([106.0,131.0],[46.0,39.0],[157.0,105.0]),
+            Polygon.make([106.0,131.0],[157.0,105.0],[106.0,131.0]),
+            Polygon.make([17.0,96.0],[70.58696,168.5],[106.0,131.0]),
+            Polygon.make([106.0,131.0],[70.58696,168.5],[92.18421,168.5]),
+            Polygon.make([17.0,96.0],[70.58696,168.5],[17.0,168.5]),
+            Polygon.make([17.0,96.0],[17.0,168.5],[17.0,96.0]),
+            Polygon.make([17.0,96.0],[17.0,168.5],[17.0,168.5])
+          ])
+          t1 = PolyGroup.new([
+            Polygon.make([17.0,96.0],[63.666668,114.35206],[22.0,71.0]),
+            Polygon.make([22.0,71.0],[63.666668,114.35206],[63.666668,100.7619]),
+            Polygon.make([22.0,71.0],[63.666668,100.7619],[34.0,47.0]),
+            Polygon.make([34.0,47.0],[63.666668,100.7619],[63.666668,81.611115]),
+            Polygon.make([34.0,47.0],[63.666668,81.611115],[46.0,39.0]),
+            Polygon.make([46.0,39.0],[63.666668,81.611115],[63.666668,66.08889]),
+            Polygon.make([46.0,39.0],[63.666668,66.08889],[63.666668,49.504505]),
+            Polygon.make([17.0,96.0],[63.666668,159.13725],[63.666668,114.35206]),
+            Polygon.make([17.0,96.0],[63.666668,159.13725],[17.0,168.5]),
+            Polygon.make([17.0,168.5],[63.666668,159.13725],[63.666668,168.5]),
+            Polygon.make([17.0,96.0],[17.0,168.5],[17.0,96.0]),
+            Polygon.make([17.0,96.0],[17.0,168.5],[17.0,168.5])
+          ])
+          t2 =  PolyGroup.new([
+            Polygon.make([106.0,131.0],[63.666668,114.35206],[63.666668,100.7619]),
+            Polygon.make([106.0,131.0],[63.666668,100.7619],[63.666668,81.611115]),
+            Polygon.make([106.0,131.0],[63.666668,81.611115],[63.666668,66.08889]),
+            Polygon.make([106.0,131.0],[63.666668,66.08889],[157.0,105.0]),
+            Polygon.make([157.0,105.0],[63.666668,66.08889],[63.666668,49.50451]),
+            Polygon.make([106.0,131.0],[157.0,105.0],[106.0,131.0]),
+            Polygon.make([70.58696,168.5],[63.666668,159.13725],[106.0,131.0]),
+            Polygon.make([106.0,131.0],[63.666668,159.13725],[63.666668,114.35206]),
+            Polygon.make([106.0,131.0],[70.58696,168.5],[92.18421,168.5]),
+            Polygon.make([70.58696,168.5],[63.666668,159.13725],[63.666668,168.5])
+          ])
+          expect(t1.area.round).to eq(5440)
+          expect(t2.area.round).to eq(5682)
+          #result = pg.allocate(3)
+          result = pg.halve_triangles(3)
+          File.open("res.svg",'wb'){|f| f << Annealing::Drawing::SVG.polygons_to_svg(*result) }
+          File.open("exp.svg",'wb'){|f| f << Annealing::Drawing::SVG.polygons_to_svg(t1,t2) }
+          expect(flatten_fully(result)).to eq(flatten_fully([t1,t2]))
         end
       end
     end
