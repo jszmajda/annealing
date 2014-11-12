@@ -31,7 +31,6 @@ sittingNeighbors :: Int -> [Point] -> [Link]
 sittingNeighbors n points = nub neighbors
   where
     neighbors  = shortestLinks (n * length points) pointPairs
-    -- pointPairs = [[a,b] | a <- points, b <- points, a /= b]
     pointPairs = combinations 2 points
 
 -- Get n neighbor connections *per point* where neighbors are closest points
@@ -42,11 +41,7 @@ walkingNeighbors n l = nub $ concatMap neighbors l
     neighbors p = shortestLinks n [[p,a] | a <- l, p /= a]
 
 mismatches :: Person -> Person -> Int
-mismatches a b = n
-  where
-    n = length $ filter (uncurry (/=)) $ zip ta tb
-    ta = a
-    tb = b
+mismatches a b = length $ filter (uncurry (/=)) $ zip a b
 
 similarityColor :: Person -> Person -> Color
 similarityColor p1 p2 = let m = mismatches p1 p2
@@ -75,12 +70,10 @@ similarityLine _ _ = undefined -- exhausting patterns
 -- Annealing time!
 
 picnicEnergy :: [Link] -> SA.EnergyFunction Placement
-picnicEnergy l a = n
+picnicEnergy l a = sum $ map linkEnergy l
   where linkEnergy :: Link -> Int
         linkEnergy [p1,p2] = mismatches (findPerson a p1) (findPerson a p2)
         linkEnergy _ = undefined -- exhausting patterns
-        n = m
-        m = sum $ map linkEnergy l
 
 picnicMotion :: [Link] -> SA.MotionFunction Placement
 picnicMotion l r a = let (n,r2) = randomR (0, length l - 1) r

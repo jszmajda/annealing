@@ -2,11 +2,7 @@ module Annealing::Simul
   class Person < Struct.new(:answers)
 
     def mismatches(other)
-      m = answers.zip(other.answers).select{|a,b| a != b}.length
-      #puts self.answers.inspect
-      #puts other.answers.inspect
-      #puts m
-      m
+      answers.zip(other.answers).select{|a,b| a != b}.length
     end
 
     def similarity_color(other)

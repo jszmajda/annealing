@@ -5,10 +5,8 @@ module Polygon (
 , allocatePeople, findLotCenter, makeDot, centers
 ) where
 
-import Data.List (partition, minimumBy, intercalate)
+import Data.List (partition, minimumBy)
 import Data.Ord (comparing)
-import Debug.Trace
-import Text.Printf
 
 type Point     = (Float,Float)
 type Polygon   = [Point]
@@ -25,7 +23,7 @@ clipTriangle _ [a,b,c] [] = [[a,b,c]]
 clipTriangle _ _ _ = undefined -- exhausting patterns
 
 slice :: (Point -> Bool) -> (Point -> Point -> Point) -> [Polygon] -> ([Polygon],[Polygon])
-slice part midpoint triangles = (clip part,clip $ not.part)
+slice part midpoint triangles = (clip part, clip $ not . part)
   where clip g = concatMap (uncurry (clipTriangle midpoint) . partition g) triangles
 
 sliceX :: Float -> [Polygon] -> ([Polygon],[Polygon])
@@ -75,7 +73,6 @@ allocatePeople n gon = let (t1,t2) = halveTriangles n gon
 centers :: [Polygon] -> Int -> [Point]
 centers polys num = map findLotCenter lots
   where
-    -- lots      = traceShowId' $ allocatePeople num triangles
     lots      = allocatePeople num triangles
     triangles = concatMap triangulate polys
 
@@ -88,14 +85,3 @@ findLotCenter p = let (l,t,r,b) = boundingRect p
 
 makeDot :: Point -> Polygon
 makeDot (x,y) = [(x - 2,y - 2), (x + 2,y - 2), (x + 2,y + 2), (x - 2,y + 2)]
-
-traceShowId' :: [[Polygon]] -> [[Polygon]]
-traceShowId' a = trace (vval a) a
-
-vval :: [[Polygon]] -> String
-vval = concatMap shpg
-  where
-    shpg pg = "[" ++ concatMap shp pg ++ "\n]\n"
-    shp p   = "\n  [" ++ intercalate "," (map sht p) ++ "]"
-    sht (x,y) = "(" ++ cc x ++ "," ++ cc y ++ ")"
-    cc = printf "%0.3f"

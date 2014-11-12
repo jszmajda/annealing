@@ -3,9 +3,6 @@ import qualified Polygon as PG
 import qualified Park
 import qualified SVG
 import System.Random (getStdGen)
-import Data.List
-import Text.Printf
-import Data.Function (on)
 
 annealTime :: Int
 annealTime = 1000
@@ -28,8 +25,6 @@ buildPicnicEnv = do
   let cnts    = PG.centers park (length people)
   let sitting = Park.sittingNeighbors 2 cnts
   let walking = Park.walkingNeighbors 4 cnts
-  -- putStrLn $ "p0: " ++ show (sum (head people))
-  -- putStrLn $ "p1: " ++ show (sum (people !! 1))
 
   return $ PicnicEnv people cnts sitting walking
 
@@ -46,21 +41,10 @@ showEnv pEnv placement time = do
   putStrLn $ "energy: " ++ show (Park.picnicEnergy (peSitting pEnv) placement)
   putStrLn $ "temperature: " ++ show (Park.picnicTemperature time annealTime)
 
-outputCenters :: PicnicEnv -> IO ()
-outputCenters e = writeFile "../hcnts.txt" centers
-  where
-    centers = intercalate "\n" $ map sh cnts
-    cnts = sortBy (compare `on` ucp) $ peCenters e
-    ucp = uncurry (+)
-    sh c = "(" ++ shf (fst c) ++ "," ++ shf (snd c) ++ ")"
-    shf = printf "%0.3f"
-
 main :: IO ()
 main = do
   pEnv      <- buildPicnicEnv
   randomGen <- getStdGen
-
-  outputCenters pEnv
 
   let startingPlacement = zip (peCenters pEnv) (pePeople pEnv)
   let annealEnv = buildAnnealEnv pEnv

@@ -3,11 +3,6 @@ def flatten_fully(pgs)
   pgs.flat_map(&:polys).flat_map(&:points)
 end
 module Annealing::Geometry
-  RSpec::Matchers.define :polymatch do |expected|
-    match do |actual|
-      actual.flat_map(&:polys).flat_map(&:points).sort == expected.flat_map(&:polys).flat_map(&:points).sort
-    end
-  end
 
   describe PolyGroup do
     let(:park) do

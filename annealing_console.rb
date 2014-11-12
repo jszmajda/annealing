@@ -1,17 +1,12 @@
 $: << "."
 $: << "./lib"
 require 'annealing'
-require 'pry'
+#require 'pry'
 
-#park = Annealing::Drawing::SVG.svg_to_polygons(File.read("pk2.svg"))
 park = Annealing::Drawing::SVG.svg_to_polygons(File.read("haskell/park.svg"))
 
-#people = Annealing.load_people("pl2.txt")
 people = Annealing.load_people("people.txt")
-#puts "p0: #{people.first.sum}"
-#puts "p1: #{people[1].sum}"
 
-#binding.pry
 parts = park.allocate(people.length) # @parts is an array of PolyGroups
 
 crystal = Annealing::Simul::Crystal.build_from_polygroups(parts)
@@ -29,6 +24,7 @@ end
 
 puts "Final Energy: #{crystal.energy}"
 puts "Final Temperature: #{format("%0.3f", crystal.temperature(time_allowed, time_allowed))}"
+
 File.open("rbfinal.svg", 'wb') do |f|
   pgs = crystal.sitting_neighbors.map do |link|
     a, b = link

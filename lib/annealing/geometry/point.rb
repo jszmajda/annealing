@@ -5,7 +5,7 @@ module Annealing::Geometry
       @x, @y = x.to_f, y.to_f
     end
 
-    ROUNDING = 2
+    ROUNDING = 5
     def ==(other)
       xx = (other.x / self.x).round(ROUNDING)
       yy = (other.y / self.y).round(ROUNDING)
