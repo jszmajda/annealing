@@ -12,7 +12,6 @@ import Data.Ord
 import Color
 import SimulatedAnnealing as SA
 import System.Random (randomR)
-import Debug.Trace
 import Comb
 
 type Link      = [Point]
@@ -32,7 +31,7 @@ sittingNeighbors :: Int -> [Point] -> [Link]
 sittingNeighbors n points = nub neighbors
   where
     neighbors  = shortestLinks (n * length points) pointPairs
-    -- pointPairs = traceShowId $ nubBy combination [[a,b] | a <- points, b <- points, a /= b]
+    -- pointPairs = [[a,b] | a <- points, b <- points, a /= b]
     pointPairs = combinations 2 points
 
 -- Get n neighbor connections *per point* where neighbors are closest points

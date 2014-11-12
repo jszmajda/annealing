@@ -8,8 +8,8 @@ import Text.Printf
 import Data.Function (on)
 
 annealTime :: Int
--- annealTime = 100
-annealTime = 5
+annealTime = 1000
+-- annealTime = 5
 
 data PicnicEnv = PicnicEnv {
   pePeople  :: [Park.Person]
@@ -26,7 +26,7 @@ buildPicnicEnv = do
   let people  = read people_text
   let park    = SVG.readPolygons park_data
   let cnts    = PG.centers park (length people)
-  let sitting = Park.sittingNeighbors 4 cnts
+  let sitting = Park.sittingNeighbors 2 cnts
   let walking = Park.walkingNeighbors 4 cnts
   -- putStrLn $ "p0: " ++ show (sum (head people))
   -- putStrLn $ "p1: " ++ show (sum (people !! 1))

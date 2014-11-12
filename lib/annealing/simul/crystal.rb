@@ -119,9 +119,7 @@ module Annealing::Simul
       all_links = atoms.combination(2)
       to_take = (2 * atoms.length)
       sorted = sort_links(all_links)
-      r = sorted[0...to_take].uniq
-      #puts r.inspect
-      r
+      sorted[0...to_take].uniq
     end
 
   end

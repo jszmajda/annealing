@@ -69,7 +69,7 @@ allocatePeople 1 gon = [gon]
 allocatePeople n gon = let (t1,t2) = halveTriangles n gon
                            a1      = sum $ map area t1
                            a2      = sum $ map area t2
-                           f = trace "---" $ traceShow n $ traceShow t2 $ traceShow t1 $ traceShowId $ trace ("a1: " ++ (show a1) ++ " a2: " ++ (show a2)) $ traceShow gon $ round $ fromIntegral n * a1 / (a1 + a2)
+                           f = round $ fromIntegral n * a1 / (a1 + a2)
                      in allocatePeople f t1 ++ allocatePeople (n - f) t2
 
 centers :: [Polygon] -> Int -> [Point]

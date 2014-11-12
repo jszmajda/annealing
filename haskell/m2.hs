@@ -26,7 +26,7 @@ buildPicnicEnv = do
   let people  = read people_text
   let park    = SVG.readPolygons park_data
   let cnts    = PG.centers park (length people)
-  let sitting = Park.sittingNeighbors 4 cnts
+  let sitting = Park.sittingNeighbors 2 cnts
   let walking = Park.walkingNeighbors 4 cnts
   -- putStrLn $ "p0: " ++ show (sum (head people))
   -- putStrLn $ "p1: " ++ show (sum (people !! 1))
@@ -70,6 +70,8 @@ main = do
   showEnv pEnv startingPlacement annealTime
 
   let finalPlacement = SA.anneal annealEnv annealTime randomGen startingPlacement
+
+  putStrLn $ "sitting links: " ++ show ( length (peSitting pEnv))
 
   writeFile "final.svg" $ SVG.writePolygons $ map (Park.similarityLine finalPlacement) (peSitting pEnv)
 

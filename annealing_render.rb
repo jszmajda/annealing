@@ -21,7 +21,7 @@ class Viz
     @ptri = @park.triangulate
     @tick = 0
     @done = false
-    people = Annealing.load_people
+    people = Annealing.load_people("people.txt")
     @parts = @park.allocate(people.length) # @parts is an array of PolyGroups
     crystal.place_people(people)
     @start_energy = crystal.energy

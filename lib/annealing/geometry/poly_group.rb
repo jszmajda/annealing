@@ -57,13 +57,6 @@ module Annealing::Geometry
       a1 = t1.area
       a2 = t2.area
       f = ((n.to_f * a1) / (a1 + a2)).round
-      puts "---"
-      puts n
-      puts t2.inspect
-      puts t1.inspect
-      puts "a1: #{a1} a2: #{a2}"
-      puts triangles.inspect
-      puts f
       alloc1 = t1.allocate(f)
       alloc2 = t2.allocate(n - f)
       alloc1 + alloc2
@@ -71,9 +64,6 @@ module Annealing::Geometry
 
     def halve_triangles(n)
       l,t,r,b = bounding_rect
-      #puts self.inspect
-      #puts bounding_rect.inspect
-      #binding.pry
 
       f = n.to_i
       h = f / 2
