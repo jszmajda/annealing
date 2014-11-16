@@ -3,4 +3,8 @@
 haskell/Main
 .DS_Store
 haskell/final.svg
+haskell/*.png
 out.svg
+rbfinal.svg
+samples/
+sketch.rb
