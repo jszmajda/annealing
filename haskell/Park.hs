@@ -1,5 +1,5 @@
 module Park (
-  Link, Person, Placement, Park, People
+  Link, Person, Placement, Park
 , picnicEnergy, picnicTemperature
 , picnicMotion, picnicTransitionalProbability
 , similarityLine
@@ -16,7 +16,6 @@ import Comb
 
 type Link      = [Point]
 type Person    = [Int]
-type People    = [Person]
 type Placement = [(Point,Person)]
 type Park      = [Polygon]
 
