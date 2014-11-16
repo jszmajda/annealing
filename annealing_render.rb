@@ -50,10 +50,10 @@ class Viz
       @annealer.anneal_tick(@time_allowed, @tick)
       @tick += 1
       #end
-      @annealer.state.inspected.each do |atom|
+      @annealer.state.inspected.each do |placement|
         stroke(0)
         fill(0,0,0,0)
-        ellipse(atom.point.x, atom.point.y, 20, 20)
+        ellipse(placement.point.x, placement.point.y, 20, 20)
       end
     end
     @done = true if @tick > @time_allowed
@@ -82,15 +82,15 @@ class Viz
   end
 
   def draw_park
-    centers      @annealer.state.atoms
+    centers      @annealer.state.placements
     center_links @annealer.state.sitting_neighbors
   end
 
-  def centers(atoms)
+  def centers(placements)
     stroke_weight(3)
     stroke(80,180,200)
     fill(150)
-    atoms.each do |c|
+    placements.each do |c|
       p = c.point
       ellipse(p.x,p.y, 5,5)
     end

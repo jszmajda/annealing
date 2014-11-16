@@ -1,7 +1,7 @@
 module Annealing
-  class Atom < Struct.new(:point, :person)
+  class Placement < Struct.new(:point, :person)
     def self.at(x,y)
-      a = Atom.new
+      a = Placement.new
       a.point = Point.new(x,y)
       a
     end

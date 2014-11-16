@@ -1,26 +1,26 @@
 module Annealing
   class Park
-    attr_accessor :atoms, :inspected
+    attr_accessor :placements, :inspected
 
-    # get centers from polygroups and convert to atoms
+    # get centers from polygroups and convert to placements
     def self.build_from_polygroups(pgs)
       c = Park.new
       pgs.each do |pg|
         pt = pg.center
         next if pt.nil?
-        c.atom_at(pt.x, pt.y)
+        c.placement_at(pt.x, pt.y)
       end
       c
     end
 
     def initialize
-      @atoms = []
+      @placements = []
       @inspected = nil
     end
 
     def place_people(people)
-      raise("count mismatch") unless people.length == atoms.length
-      atoms.zip(people).each do |a,p|
+      raise("count mismatch") unless people.length == placements.length
+      placements.zip(people).each do |a,p|
         a.person = p
       end
     end
@@ -55,14 +55,14 @@ module Annealing
       a1.person = p
     end
 
-    def atom_at(x,y)
-      a = Atom.new
+    def placement_at(x,y)
+      a = Placement.new
       a.point = Point.new(x,y)
-      atoms << a
+      placements << a
     end
 
     def eq(other)
-      other.atoms == self.atoms
+      other.placements == self.placements
     end
     alias :== :eq
 
@@ -73,12 +73,12 @@ module Annealing
 
     def walking_neighbors(min_points)
       @walking_neighbors ||= begin
-      my_neighbors = ->(a) do
-        all_links = (atoms - [a]).map{|atom| [a, atom].sort }
-        sorted = sort_links(all_links)
-        sorted[0...min_points]
-      end
-      atoms.flat_map(&my_neighbors).uniq
+                               my_neighbors = ->(a) do
+                                 all_links = (placements - [a]).map{|placement| [a, placement].sort }
+                                 sorted = sort_links(all_links)
+                                 sorted[0...min_points]
+                               end
+                               placements.flat_map(&my_neighbors).uniq
                              end
     end
 
@@ -94,9 +94,9 @@ module Annealing
     # version, but I have to change the formula from 4 * points to
     # 2 * points to get a comparable output.
     def build_sitting_neighbors
-      all_links = atoms.combination(2)
-      to_take = (2 * atoms.length)
-      sorted = sort_links(all_links)
+      all_links = placements.combination(2)
+      to_take   = (2 * placements.length)
+      sorted    = sort_links(all_links)
       sorted[0...to_take].uniq
     end
 

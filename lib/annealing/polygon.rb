@@ -21,9 +21,11 @@ module Annealing
     # Doesn't handle concave polygons
     def triangulate(set = points)
       return PolyGroup.new([]) if set.length < 3
-      a,b,c = set.take(3)
-      rest = set[3..-1]
-      PolyGroup.new([Polygon.new([a,b,c])] + triangulate([a,c] + rest).polys)
+      a,b,c = set[0..3]
+      rest  = set[3..-1]
+
+      rest_group = triangulate([a,c] + rest)
+      PolyGroup.new( [Polygon.new([a,b,c])] + rest_group.polys)
     end
 
     def area

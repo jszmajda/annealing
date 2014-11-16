@@ -81,12 +81,17 @@ module Annealing
     def center
       return nil unless polys.any?
       l,t,r,b = bounding_rect
-      mx = (r+l) / 2.0
-      my = (b+t) / 2.0
-      lh, rh = slice_x(mx)
-      th, bh = PolyGroup.new(lh.polys + rh.polys).slice_y(my)
-      m = Point.new(mx, my)
-      sort = ->(q,s) { q.distance_to(m) <=> s.distance_to(m) }
+
+      midx = (r+l) / 2.0
+      midy = (b+t) / 2.0
+
+      lh, rh = slice_x(midx)
+      th, bh = PolyGroup.new(lh.polys + rh.polys).slice_y(midy)
+
+      true_center = Point.new(midx, midy)
+
+      sort = ->(p0,p1) { p0.distance_to(true_center) <=> p1.distance_to(true_center) }
+
       all_points = [lh,rh,th,bh].map(&:polys).flatten.map(&:points).flatten
       all_points.sort(&sort).first
     end

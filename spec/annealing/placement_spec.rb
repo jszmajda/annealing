@@ -1,22 +1,22 @@
 require 'spec_helper'
 module Annealing
-  describe Atom do
+  describe Placement do
     it "has a point" do
-      a = Atom.new
+      a = Placement.new
       expect(->{ a.point }).to_not raise_exception
     end
 
-    it "is equal with another Atom if its point matches" do
-      a1 = Atom.new
+    it "is equal with another Placement if its point matches" do
+      a1 = Placement.new
       a1.point = Point.new(1,2)
 
-      a2 = Atom.new
+      a2 = Placement.new
       a2.point = Point.new(2,3)
 
-      a3 = Atom.new
+      a3 = Placement.new
       a3.point = Point.new(1,2)
 
-      a4 = Atom.new
+      a4 = Placement.new
       a4.point = Point.new(1,2)
 
       expect(a1).to_not eq(a2)
@@ -25,8 +25,8 @@ module Annealing
     end
 
     describe "#at" do
-      it "builds an Atom at a specified point" do
-        a = Atom.at(1,2)
+      it "builds an Placement at a specified point" do
+        a = Placement.at(1,2)
         expect(a.point).to   eq(Point.new(1,2))
       end
     end

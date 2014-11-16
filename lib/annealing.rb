@@ -46,7 +46,7 @@ end
 require 'annealing/simulated_annealing'
 require 'annealing/park_annealer'
 require 'annealing/park'
-require 'annealing/atom'
+require 'annealing/placement'
 require 'annealing/person'
 require 'annealing/polygon'
 require 'annealing/point'
