@@ -1,7 +1,7 @@
 module Park (
   Link, Person, Placement, Park
 , picnicEnergy, picnicTemperature
-, picnicMutation, picnicTransitionalProbability
+, picnicMutation, picnicProbability
 , similarityLine
 , sittingNeighbors, walkingNeighbors
 ) where
@@ -82,6 +82,6 @@ picnicMutation l r a = let (n,r2) = randomR (0, length l - 1) r
 picnicTemperature :: SA.TemperatureFunction
 picnicTemperature m c = 50.0 * exp (0.0 - (5.0 * (fromIntegral c / fromIntegral m)))
 
-picnicTransitionalProbability :: SA.TransitionProbabilityFunction
-picnicTransitionalProbability e1 e2 t = exp (fromIntegral (e1 - e2) / t)
+picnicProbability :: SA.ProbabilityFunction
+picnicProbability e1 e2 t = exp (fromIntegral (e1 - e2) / t)
 

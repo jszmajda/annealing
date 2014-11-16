@@ -32,7 +32,7 @@ buildAnnealEnv :: PicnicEnv -> SA.AnnealEnv Park.Placement
 buildAnnealEnv pEnv = SA.AnnealEnv
                         (Park.picnicEnergy (peSitting pEnv))
                         Park.picnicTemperature
-                        Park.picnicTransitionalProbability
+                        Park.picnicProbability
                         (Park.picnicMutation (peWalking pEnv))
 
 showEnv :: PicnicEnv -> Park.Placement -> Int -> IO ()
