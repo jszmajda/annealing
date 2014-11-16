@@ -1,10 +1,10 @@
 module Annealing
-  class Crystal
+  class Park
     attr_accessor :atoms, :inspected
 
     # get centers from polygroups and convert to atoms
     def self.build_from_polygroups(pgs)
-      c = Crystal.new
+      c = Park.new
       pgs.each do |pg|
         pt = pg.center
         next if pt.nil?

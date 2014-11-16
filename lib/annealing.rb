@@ -22,9 +22,9 @@ module Annealing
     end
   end
 
-  def self.write_svg(filename, crystal)
+  def self.write_svg(filename, park)
     File.open(filename, 'wb') do |f|
-      pgs = crystal.sitting_neighbors.map do |link|
+      pgs = park.sitting_neighbors.map do |link|
         a, b = link
         pg = PolyGroup.new([Polygon.new([a.point, b.point])])
         r,g,b = a.person.similarity_color(b.person).map(&:to_i)
@@ -44,8 +44,8 @@ module Annealing
 end
 
 require 'annealing/simulated_annealing'
-require 'annealing/crystal_annealer'
-require 'annealing/crystal'
+require 'annealing/park_annealer'
+require 'annealing/park'
 require 'annealing/atom'
 require 'annealing/person'
 require 'annealing/polygon'

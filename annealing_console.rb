@@ -3,7 +3,7 @@ $: << "./lib"
 require 'annealing'
 #require 'pry'
 
-ca = Annealing::CrystalAnnealer.new
+ca = Annealing::ParkAnnealer.new
 ca.setup(
   File.read("haskell/park.svg"),
   File.read("people.txt"))

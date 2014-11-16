@@ -1,30 +1,30 @@
 require 'spec_helper'
-module Annealing::Simul
-  describe Crystal do
+module Annealing
+  describe Park do
 
     let(:sample) do
       ps = [[53,60], [34,96], [69,102], [104,97], [139,104]]
-      c = Crystal.new
+      c = Park.new
       ps.each { |p| c.atom_at(*p) }
       c
     end
 
     describe "#atom_at" do
       it "builds an Atom at the specified point" do
-        c = Crystal.new
+        c = Park.new
         c.atom_at(1,2)
 
         a = Atom.new
-        a.point = Annealing::Geometry::Point.new(1,2)
+        a.point = Point.new(1,2)
 
         expect(c.atoms).to eq([a])
       end
     end
 
     describe "#build_from_polygroups" do
-      it "constructs a crystal from a list of PolyGroups" do
-        pgs = Annealing::Geometry::PolyGroup.new([
-          Annealing::Geometry::Polygon.make(
+      it "constructs a park from a list of PolyGroups" do
+        pgs = PolyGroup.new([
+          Polygon.make(
             [106.7619, 131.19048],
             [17.190476, 96.809524],
             [22.619047, 71.47619],
@@ -34,9 +34,9 @@ module Annealing::Simul
             [106.7619, 131.19048]
           )
         ]).allocate(5)
-        c1 = Crystal.build_from_polygroups(pgs)
+        c1 = Park.build_from_polygroups(pgs)
 
-        c2 = Crystal.new
+        c2 = Park.new
         cents = [
           [47.138192347840516,59.44240117669629],
           [45.238094800000006,98.70815553008887],
@@ -51,14 +51,14 @@ module Annealing::Simul
     end
 
     it "has atoms" do
-      c = Crystal.new
+      c = Park.new
       expect(-> { c.atoms }).to_not raise_exception
     end
 
-    it "is equal to another Crystal with the same atoms" do
-      c1 = Crystal.new
-      c2 = Crystal.new
-      c3 = Crystal.new
+    it "is equal to another Park with the same atoms" do
+      c1 = Park.new
+      c2 = Park.new
+      c3 = Park.new
 
       c1.atom_at(1,2)
       c1.atom_at(2,3)

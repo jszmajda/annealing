@@ -24,7 +24,7 @@ end
 class Viz
 
   def initialize
-    @annealer = Annealing::CrystalAnnealer.new
+    @annealer = Annealing::ParkAnnealer.new
     @annealer.setup(
       File.read("haskell/park.svg"),
       File.read("people.txt"))
@@ -41,7 +41,7 @@ class Viz
 
   def draw
     park_triangles
-    draw_crystal
+    draw_park
 
     @energy_graph.draw
     @temperature_graph.draw(@tick)
@@ -81,7 +81,7 @@ class Viz
     rect 10, 340, progress_width, 15
   end
 
-  def draw_crystal
+  def draw_park
     centers      @annealer.state.atoms
     center_links @annealer.state.sitting_neighbors
   end

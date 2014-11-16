@@ -1,5 +1,5 @@
 require 'spec_helper'
-module Annealing::Geometry
+module Annealing
   describe Point do
     it "is an x-y coordinate" do
       p = Point.new(1,2)

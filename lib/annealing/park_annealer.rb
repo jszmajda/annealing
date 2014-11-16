@@ -1,5 +1,5 @@
 module Annealing
-  class CrystalAnnealer
+  class ParkAnnealer
     attr_accessor :park, :people, :parts
 
     include SimulatedAnnealing
@@ -10,9 +10,9 @@ module Annealing
       self.park = SVG.svg_to_polygons(svg)
       self.people = Annealing.load_people(people_data)
       self.parts = park.allocate(people.length) # @parts is an array of PolyGroups
-      crystal = Crystal.build_from_polygroups(parts)
-      crystal.place_people(people)
-      self.state = crystal
+      park = Park.build_from_polygroups(parts)
+      park.place_people(people)
+      self.state = park
     end
 
     def rollback

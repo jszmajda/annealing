@@ -2,12 +2,12 @@ require 'spec_helper'
 def flatten_fully(pgs)
   pgs.flat_map(&:polys).flat_map(&:points)
 end
-module Annealing::Geometry
+module Annealing
 
   describe PolyGroup do
     let(:park) do
       file = File.join(File.dirname(__FILE__), '..', 'park.svg')
-      Annealing::Drawing::SVG.svg_to_polygons(File.read(file))
+      SVG.svg_to_polygons(File.read(file))
     end
     let(:complex) do
       PolyGroup.new([
