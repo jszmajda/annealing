@@ -1,4 +1,4 @@
-module Annealing::Simul
+module Annealing
   class CrystalAnnealer
     attr_accessor :park, :people, :parts
 
@@ -7,10 +7,10 @@ module Annealing::Simul
     end
 
     def setup(svg, people_data)
-      self.park = Annealing::Drawing::SVG.svg_to_polygons(svg)
+      self.park = SVG.svg_to_polygons(svg)
       self.people = Annealing.load_people(people_data)
       self.parts = park.allocate(people.length) # @parts is an array of PolyGroups
-      crystal = Annealing::Simul::Crystal.build_from_polygroups(parts)
+      crystal = Crystal.build_from_polygroups(parts)
       crystal.place_people(people)
       self.state = crystal
     end

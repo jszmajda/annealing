@@ -3,7 +3,7 @@ require 'nokogiri'
 module Annealing
   def self.load_people(data)
     people = eval(data)
-    people.map{|answers| Annealing::Simul::Person.new(answers) }
+    people.map{|answers| Person.new(answers) }
   end
 
   def self.anneal
@@ -26,12 +26,12 @@ module Annealing
     File.open(filename, 'wb') do |f|
       pgs = crystal.sitting_neighbors.map do |link|
         a, b = link
-        pg = Annealing::Geometry::PolyGroup.new([Annealing::Geometry::Polygon.new([a.point, b.point])])
+        pg = PolyGroup.new([Polygon.new([a.point, b.point])])
         r,g,b = a.person.similarity_color(b.person).map(&:to_i)
         pg.color = "rgb(#{r},#{g},#{b})"
         pg
       end
-      f << Annealing::Drawing::SVG.polygons_to_svg(*pgs.sample(pgs.length))
+      f << SVG.polygons_to_svg(*pgs.sample(pgs.length))
     end
   end
 
@@ -43,12 +43,12 @@ module Annealing
   end
 end
 
-require 'annealing/simul/simulated_annealing'
-require 'annealing/simul/crystal_annealer'
-require 'annealing/simul/crystal'
-require 'annealing/simul/atom'
-require 'annealing/simul/person'
-require 'annealing/geometry/polygon'
-require 'annealing/geometry/point'
-require 'annealing/geometry/poly_group'
-require 'annealing/drawing/svg'
+require 'annealing/simulated_annealing'
+require 'annealing/crystal_annealer'
+require 'annealing/crystal'
+require 'annealing/atom'
+require 'annealing/person'
+require 'annealing/polygon'
+require 'annealing/point'
+require 'annealing/poly_group'
+require 'annealing/svg'

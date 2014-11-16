@@ -1,4 +1,4 @@
-module Annealing::Geometry
+module Annealing
   class Polygon
     attr_accessor :points
     def initialize(points)

@@ -1,8 +1,8 @@
-module Annealing::Simul
+module Annealing
   class Atom < Struct.new(:point, :person)
     def self.at(x,y)
       a = Atom.new
-      a.point = Annealing::Geometry::Point.new(x,y)
+      a.point = Point.new(x,y)
       a
     end
 

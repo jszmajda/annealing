@@ -24,7 +24,7 @@ end
 class Viz
 
   def initialize
-    @annealer = Annealing::Simul::CrystalAnnealer.new
+    @annealer = Annealing::CrystalAnnealer.new
     @annealer.setup(
       File.read("haskell/park.svg"),
       File.read("people.txt"))
@@ -69,7 +69,7 @@ class Viz
   def progress_bar(current, max)
     bar_width = 600
     pct = current / max.to_f
-    progress_width = width * pct
+    progress_width = bar_width * pct
 
     stroke_weight 1
     stroke 150

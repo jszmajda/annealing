@@ -1,4 +1,4 @@
-module Annealing::Simul
+module Annealing
   class Crystal
     attr_accessor :atoms, :inspected
 
@@ -57,7 +57,7 @@ module Annealing::Simul
 
     def atom_at(x,y)
       a = Atom.new
-      a.point = Annealing::Geometry::Point.new(x,y)
+      a.point = Point.new(x,y)
       atoms << a
     end
 

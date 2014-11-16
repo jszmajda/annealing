@@ -1,4 +1,4 @@
-module Annealing::Simul
+module Annealing
   class Person < Struct.new(:answers)
 
     def mismatches(other)

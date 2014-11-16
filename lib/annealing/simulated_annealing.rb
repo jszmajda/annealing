@@ -1,4 +1,4 @@
-module Annealing::Simul
+module Annealing
   module SimulatedAnnealing
     attr_accessor :state
 

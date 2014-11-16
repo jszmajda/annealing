@@ -1,4 +1,4 @@
-module Annealing::Drawing
+module Annealing
   module SVG
     SVG_HEADER = %q{<svg xmlns="http://www.w3.org/2000/svg">}
     SVG_FOOTER = %q{</svg>}
@@ -14,11 +14,11 @@ module Annealing::Drawing
 
       def svg_to_polygons(svg)
         doc = Nokogiri::XML.parse(svg)
-        Annealing::Geometry::PolyGroup.new(polys_from_polygons(doc) + polys_from_paths(doc))
+        PolyGroup.new(polys_from_polygons(doc) + polys_from_paths(doc))
       end
 
       def box_at(p)
-        pg = Annealing::Geometry::PolyGroup.new [Annealing::Geometry::Polygon.make(*[[3,3],[3,-3],[-3,-3],[-3,3]].map{|dx,dy| [p.x + dx, p.y + dy] })]
+        pg = PolyGroup.new [Polygon.make(*[[3,3],[3,-3],[-3,-3],[-3,3]].map{|dx,dy| [p.x + dx, p.y + dy] })]
         pg.color = 'black'
         pg
       end
@@ -29,7 +29,7 @@ module Annealing::Drawing
         doc.css('polygon').map do |poly|
           points = poly.attr('points').split(/ /)
           pairs = points.map{|xy| xy.split(/,/).map(&:to_f) }
-          Annealing::Geometry::Polygon.make(*pairs)
+          Polygon.make(*pairs)
         end
       end
 
@@ -38,7 +38,7 @@ module Annealing::Drawing
           points = poly.attr('d')
           bits = points.scan(/([\d.]+),([\d.]+)/)
           pairs = bits.map{|(x,y)| [x.to_f, y.to_f] }
-          Annealing::Geometry::Polygon.make(*pairs)
+          Polygon.make(*pairs)
         end
       end
 
