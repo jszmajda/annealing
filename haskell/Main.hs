@@ -5,7 +5,7 @@ import qualified SVG
 import System.Random (getStdGen)
 
 annealTime :: Int
-annealTime = 1000
+annealTime = 5000
 -- annealTime = 5
 
 data PicnicEnv = PicnicEnv {
@@ -29,12 +29,11 @@ buildPicnicEnv = do
   return $ PicnicEnv people cnts sitting walking
 
 buildAnnealEnv :: PicnicEnv -> SA.AnnealEnv Park.Placement
-buildAnnealEnv pEnv =
-  SA.AnnealEnv
-    (Park.picnicEnergy (peSitting pEnv))
-    Park.picnicTemperature
-    Park.picnicTransitionalProbability
-    (Park.picnicMotion (peWalking pEnv))
+buildAnnealEnv pEnv = SA.AnnealEnv
+                        (Park.picnicEnergy (peSitting pEnv))
+                        Park.picnicTemperature
+                        Park.picnicTransitionalProbability
+                        (Park.picnicMutation (peWalking pEnv))
 
 showEnv :: PicnicEnv -> Park.Placement -> Int -> IO ()
 showEnv pEnv placement time = do

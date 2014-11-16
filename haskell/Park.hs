@@ -1,7 +1,7 @@
 module Park (
   Link, Person, Placement, Park
 , picnicEnergy, picnicTemperature
-, picnicMotion, picnicTransitionalProbability
+, picnicMutation, picnicTransitionalProbability
 , similarityLine
 , sittingNeighbors, walkingNeighbors
 ) where
@@ -74,10 +74,10 @@ picnicEnergy l a = sum $ map linkEnergy l
         linkEnergy [p1,p2] = mismatches (findPerson a p1) (findPerson a p2)
         linkEnergy _ = undefined -- exhausting patterns
 
-picnicMotion :: [Link] -> SA.MotionFunction Placement
-picnicMotion l r a = let (n,r2) = randomR (0, length l - 1) r
-                         [p1,p2] = l!!n
-                     in (r2, (p1, findPerson a p2) : (p2, findPerson a p1) : filter (not . flip elem [p1,p2] . fst) a)
+picnicMutation :: [Link] -> SA.MutationFunction Placement
+picnicMutation l r a = let (n,r2) = randomR (0, length l - 1) r
+                           [p1,p2] = l!!n
+                       in (r2, (p1, findPerson a p2) : (p2, findPerson a p1) : filter (not . flip elem [p1,p2] . fst) a)
 
 picnicTemperature :: SA.TemperatureFunction
 picnicTemperature m c = 50.0 * exp (0.0 - (5.0 * (fromIntegral c / fromIntegral m)))
