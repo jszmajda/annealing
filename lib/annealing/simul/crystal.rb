@@ -1,6 +1,6 @@
 module Annealing::Simul
   class Crystal
-    attr_accessor :atoms
+    attr_accessor :atoms, :inspected
 
     # get centers from polygroups and convert to atoms
     def self.build_from_polygroups(pgs)
@@ -15,6 +15,7 @@ module Annealing::Simul
 
     def initialize
       @atoms = []
+      @inspected = nil
     end
 
     def place_people(people)
@@ -24,13 +25,18 @@ module Annealing::Simul
       end
     end
 
+    def links_with_energy
+      links.map {|a,b| [a.person.mismatches(b.person), [a,b]] }
+    end
+
     def energy
-      sitting_neighbors.map {|a,b| a.person.mismatches(b.person) }.inject(0){|s,e| s + e }
+      links_with_energy.inject(0){|s,(e,_)| s + e }
     end
 
     # swap two people randomly
     # so much simpler than in the tutorial!!
-    def motion
+    def mutate
+      #STDERR.<< "."
       links = walking_neighbors(4)
       swap = links.sample
       a0 = swap[0]
@@ -38,44 +44,15 @@ module Annealing::Simul
       p = a0.person
       a0.person = a1.person
       a1.person = p
-      [a0,a1]
+      @inspected = [a0,a1]
+      self
     end
-    def rollback(changed)
-      a0, a1 = changed
+    def rollback
+      #STDERR.<< "!"
+      a0, a1 = @inspected
       p = a0.person
       a0.person = a1.person
       a1.person = p
-    end
-
-    # TemperatureFunction = Int -> Int -> Float
-    def temperature(current, max)
-      50 * Math.exp(0 - (5 * ( current / max.to_f)))
-    end
-
-    # TransitionProbabilityFunction = Int -> Int -> Float -> Float
-    def transition_probability(e1, e2, temperature)
-      Math.exp( (e1 - e2) / temperature )
-    end
-
-    def anneal(cur_time, max_time)
-      anneal_tick(temperature(cur_time, max_time))
-    end
-
-    def anneal_tick(t)
-      current_state_energy = energy
-      inspected = motion
-      next_state_energy = energy
-
-      tp = transition_probability( current_state_energy, next_state_energy, t)
-
-      n = rand(0.0..1.0)
-      if n < tp
-        # keep next state
-        inspected
-      else
-        rollback(inspected)
-        []
-      end
     end
 
     def atom_at(x,y)
@@ -92,6 +69,7 @@ module Annealing::Simul
     def sitting_neighbors
       @sitting_neighbors ||= build_sitting_neighbors
     end
+    alias :links :sitting_neighbors
 
     def walking_neighbors(min_points)
       @walking_neighbors ||= begin
