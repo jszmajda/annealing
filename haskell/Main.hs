@@ -38,7 +38,7 @@ buildAnnealEnv pEnv = SA.AnnealEnv
 showEnv :: PicnicEnv -> Park.Placement -> Int -> IO ()
 showEnv pEnv placement time = do
   putStrLn $ "energy: " ++ show (Park.picnicEnergy (peSitting pEnv) placement)
-  putStrLn $ "temperature: " ++ show (Park.picnicTemperature time annealTime)
+  putStrLn $ "temperature: " ++ show (Park.picnicTemperature annealTime time)
 
 main :: IO ()
 main = do
@@ -50,11 +50,11 @@ main = do
 
   putStrLn $ "Number of people coming: "   ++ show (length (pePeople pEnv))
   putStrLn $ "number of annealing steps: " ++ show annealTime
-  showEnv pEnv startingPlacement annealTime
+  showEnv pEnv startingPlacement 0
 
   let finalPlacement = SA.anneal annealEnv annealTime randomGen startingPlacement
 
   writeFile "final.svg" $ SVG.writePolygons $ map (Park.similarityLine finalPlacement) (peSitting pEnv)
 
   putStrLn "Done!"
-  showEnv pEnv finalPlacement 0
+  showEnv pEnv finalPlacement annealTime
