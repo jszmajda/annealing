@@ -40,25 +40,18 @@ module Annealing
     # swap two people randomly
     # so much simpler than in the tutorial!!
     def mutate
-      #STDERR.<< "."
-      links = walking_neighbors(4)
-      #angriest = links.sort_by{|l| link_energy[*l] }.reverse[0..(links.length * 0.2).to_i]
-      #swap = angriest.sample
-      swap = links.sample
-      a0 = swap[0]
-      a1 = swap[1]
-      p = a0.person
-      a0.person = a1.person
-      a1.person = p
-      @inspected = [a0,a1]
+      p0, p1 = walking_neighbors(4).sample
+      p = p0.person
+      p0.person = p1.person
+      p1.person = p
+      @inspected = [p0,p1]
       self
     end
     def rollback
-      #STDERR.<< "!"
-      a0, a1 = @inspected
-      p = a0.person
-      a0.person = a1.person
-      a1.person = p
+      p0, p1 = @inspected
+      p = p0.person
+      p0.person = p1.person
+      p1.person = p
     end
 
     def placement_at(x,y)
