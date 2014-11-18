@@ -19,6 +19,9 @@ def key_pressed
   if key == "r"
     @viz = Viz.new
   end
+  if key == "q"
+    exit
+  end
 end
 
 class Viz
@@ -166,6 +169,10 @@ class EnergyGraph
     color = link[0].person.similarity_color(link[1].person)
     stroke(*color)
     fill(*color)
+    #if @annealer.state.inspected && link[0] == @annealer.state.inspected[1] && link[1] == @annealer.state.inspected[0]
+    #  stroke(255,255,0)
+    #  fill(255,255,0)
+    #end
 
     cx = (i * @x_scale) + (x + pad)
     cwid = @x_scale
