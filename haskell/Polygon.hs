@@ -12,7 +12,7 @@ type Point     = (Float,Float)
 type Polygon   = [Point]
 
 triangulate :: Polygon -> [Polygon]
-triangulate (a:b:c:xs) = [a,b,c]:triangulate (a:c:xs)
+triangulate (a:b:c:xs) = [a,b,c] : triangulate (a:c:xs)
 triangulate _ = []
 
 clipTriangle :: (Point -> Point -> Point) -> [Point] -> [Point] -> [Polygon]
@@ -78,10 +78,10 @@ centers polys num = map findLotCenter lots
 
 findLotCenter :: [Polygon] -> Point
 findLotCenter p = let (l,t,r,b) = boundingRect p
-                      m@(x,y)   = ((r+l)/2,(b+t)/2)
+                      mid@(x,y) = ((r+l)/2,(b+t)/2)
                       (lh,rh)   = sliceX x p
                       (th,bh)   = sliceY y $ lh ++ rh
-                  in minimumBy (comparing $ distance m) $ concat $ th ++ bh
+                  in minimumBy (comparing $ distance mid) $ concat $ th ++ bh
 
 makeDot :: Point -> Polygon
 makeDot (x,y) = [(x - 2,y - 2), (x + 2,y - 2), (x + 2,y + 2), (x - 2,y + 2)]

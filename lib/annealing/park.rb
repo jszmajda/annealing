@@ -25,8 +25,12 @@ module Annealing
       end
     end
 
+    def link_energy
+      ->(a,b) { a.person.mismatches(b.person) }
+    end
+
     def links_with_energy
-      links.map {|a,b| [a.person.mismatches(b.person), [a,b]] }
+      links.map {|a,b| [link_energy[a,b], [a,b]] }
     end
 
     def energy
@@ -38,6 +42,8 @@ module Annealing
     def mutate
       #STDERR.<< "."
       links = walking_neighbors(4)
+      #angriest = links.sort_by{|l| link_energy[*l] }.reverse[0..(links.length * 0.2).to_i]
+      #swap = angriest.sample
       swap = links.sample
       a0 = swap[0]
       a1 = swap[1]
@@ -74,8 +80,8 @@ module Annealing
     def walking_neighbors(min_points)
       @walking_neighbors ||= begin
                                my_neighbors = ->(a) do
-                                 all_links = (placements - [a]).map{|placement| [a, placement].sort }
-                                 sorted = sort_links(all_links)
+                                 links = (placements - [a]).map{|placement| [a, placement].sort }
+                                 sorted = links.sort_by(&link_length)
                                  sorted[0...min_points]
                                end
                                placements.flat_map(&my_neighbors).uniq
@@ -84,19 +90,19 @@ module Annealing
 
     private
 
-    def sort_links(links)
-      links.sort_by do |link|
+    def link_length
+      ->(link) {
         link[0].point.distance_to(link[1].point)
-      end
+      }
     end
 
     # using `combination` leads to performance superior to haskell
     # version, but I have to change the formula from 4 * points to
     # 2 * points to get a comparable output.
     def build_sitting_neighbors
-      all_links = placements.combination(2)
+      links = placements.combination(2)
       to_take   = (2 * placements.length)
-      sorted    = sort_links(all_links)
+      sorted    = links.sort_by(&link_length)
       sorted[0...to_take].uniq
     end
 

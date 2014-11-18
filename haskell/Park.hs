@@ -80,7 +80,8 @@ picnicMutation l r a = let (n,r2) = randomR (0, length l - 1) r
                        in (r2, (p1, findPerson a p2) : (p2, findPerson a p1) : filter (not . flip elem [p1,p2] . fst) a)
 
 picnicTemperature :: SA.TemperatureFunction
-picnicTemperature m c = 50.0 * exp (0.0 - (5.0 * (fromIntegral c / fromIntegral m)))
+picnicTemperature max cur = 50.0 * exp (0.0 - (5.0 * currentRatio))
+  where currentRatio = fromIntegral cur / fromIntegral max
 
 picnicProbability :: SA.ProbabilityFunction
 picnicProbability e1 e2 t = exp (fromIntegral (e1 - e2) / t)
