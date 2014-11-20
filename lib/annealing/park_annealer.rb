@@ -38,7 +38,7 @@ module Annealing
     # which makes only the downhill transitions.
     #
     def probability(e1, e2, temperature)
-      Math.exp( (e1 - e2) / temperature ) > rand(0.0..1.0)
+      Math.exp( (e1 - e2) / temperature )
     end
 
   end

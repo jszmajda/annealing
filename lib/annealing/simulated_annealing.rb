@@ -15,7 +15,7 @@ module Annealing
       next_state  = state.mutate
       next_energy = next_state.energy
 
-      if probability(cur_energy, next_energy, t)
+      if probability(cur_energy, next_energy, t) > rand(0.0..1.0)
         self.state = next_state
         cur_energy = next_energy
       else

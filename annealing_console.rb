@@ -8,7 +8,7 @@ ca.setup(
   File.read("haskell/park.svg"),
   File.read("people.txt"))
 
-time_allowed = 10_000
+time_allowed = 5_000
 #time_allowed = 2
 
 puts "Starting energy: #{ca.energy}"
